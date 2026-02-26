@@ -1,15 +1,15 @@
-import Bike from "../models/bike";
+import Bike from "../models/bike.js";
 
 export const addBike = async (req, res) => {
     try {
         const { brand, modelName, variant, basePrice, colorOptions, hsnCode, isActive } = req.body;
 
-        if (!brand || !modelName || !variant || !basePrice || !colorOptions || !hsnCode) return res.status(400).json({ message: "Fill all fields", success: false });
+        if (!brand || !modelName || !variant || basePrice==null || !colorOptions || !hsnCode) return res.status(400).json({ message: "Fill all fields", success: false });
 
         const exist = await Bike.findOne({ modelName, variant, colorOptions });
         if (exist) return res.status(400).json({ message: "Bike already exist", success: false });
 
-        const created = await Bike.create({ brand, modelName, variant, basePrice, colorOptions, hsnCode, isActive: isActive || true });
+        const created = await Bike.create({ brand, modelName, variant, basePrice, colorOptions, hsnCode, isActive });
 
         if (!created) return res.status(400).json({ message: "Error creating bike document", success: false });
 
@@ -24,7 +24,7 @@ export const getAllBike = async (req, res) => {
     try {
         const bikes = await Bike.find();
         if (!bikes) return res.status(400).json({ message: "Bikes not found", success: false });
-        res.status(200).json({ bikes, message: "Bikes fetched successfully", success: true })
+        res.status(200).json({ bikes, message: "Bikes fetched successfully", success: true });
     } catch (err) {
         res.status(500).json({ message: "Error fetching bikes", error: err.message });
     }

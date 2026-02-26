@@ -7,7 +7,7 @@ const BikeModelSchema = new mongoose.Schema({
     basePrice: { type: Number, required: true },
     colorOptions: { type: String },
     hsnCode: { type: String, required: true, default: "87112029" },
-    isActive: { type: Boolean },
+    isActive: { type: Boolean ,default:true},
 }, { timestamps: true });
 
 export default mongoose.model("BikeModel", BikeModelSchema);
