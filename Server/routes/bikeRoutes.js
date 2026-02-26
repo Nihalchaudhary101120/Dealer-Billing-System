@@ -1,5 +1,5 @@
 import express from "express";
-import { addBike, deleteBike, getAllBike, updateBike } from "../controller/bikeController";
+import { addBike, deleteBike, getAllBike, updateBike } from "../controller/bikeController.js";
 const router = express.Router();
 
 router.post("/", addBike);

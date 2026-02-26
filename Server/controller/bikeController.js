@@ -1,4 +1,4 @@
-import Bike from "../models/bike";
+import Bike from "../models/bike.js";
 
 export const addBike = async (req, res) => {
     try {
@@ -16,7 +16,7 @@ export const addBike = async (req, res) => {
         res.status(200).json({ created, message: "Bike Successfully added", success: true });
 
     } catch (err) {
-        res.status(500).json({ message: "Error creating bike", error: err.message });
+        res.status(500).json({ message: "Error creating bike", success: false, error: err.message });
     }
 };
 
@@ -26,7 +26,7 @@ export const getAllBike = async (req, res) => {
         if (!bikes) return res.status(400).json({ message: "Bikes not found", success: false });
         res.status(200).json({ bikes, message: "Bikes fetched successfully", success: true })
     } catch (err) {
-        res.status(500).json({ message: "Error fetching bikes", error: err.message });
+        res.status(500).json({ message: "Error fetching bikes", success: false, error: err.message });
     }
 };
 
@@ -40,7 +40,7 @@ export const updateBike = async (req, res) => {
         res.status(200).json({ updated, message: "Updated successfully", success: true });
     }
     catch (err) {
-        res.status(500).json({ message: "Error updating Bike", error: err.message });
+        res.status(500).json({ message: "Error updating Bike", success: false, error: err.message });
     }
 };
 
@@ -51,7 +51,7 @@ export const deleteBike = async (req, res) => {
         res.status(200).json({ message: "Bike record deleted", success: true });
     }
     catch (err) {
-        res.status(500).json({ message: "Error deleting bike", error: err.message });
+        res.status(500).json({ message: "Error deleting bike", success: false, error: err.message });
     }
 };
 
