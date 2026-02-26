@@ -12,8 +12,6 @@ const FinanceCompanySchema = new mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,
         ref:"dealer"
     }
-
-
 }, { timestamps: true });
 
 export default mongoose.model("bank",FinanceCompanySchema);

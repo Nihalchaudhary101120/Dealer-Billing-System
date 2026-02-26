@@ -5,6 +5,7 @@ import 'dotenv/config';
 import connectDB from './config/db.js';
 import authRoutes from './routes/authRoutes.js';
 import requireAuth from './middleware/requireAuth.js';
+import bikeRoutes from './routes/bikeRoutes.js';
 
 connectDB();
 const app = express();
@@ -29,6 +30,7 @@ app.use(session({
 
 app.use('/auth', authRoutes);
 app.use(requireAuth);
+app.use("/bike", bikeRoutes);
 
 
 const port = 3000;
