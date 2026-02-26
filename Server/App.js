@@ -7,6 +7,7 @@ import authRoutes from './routes/authRoutes.js';
 import requireAuth from './middleware/requireAuth.js';
 import bikeRoutes from './routes/bikeRoutes.js';
 import financeCompanyRoutes from  "./routes/financecomapanyRoutes.js";
+import dealerRoutes from './routes/dealerRoutes.js';
 
 connectDB();
 const app = express();
@@ -33,6 +34,7 @@ app.use('/auth', authRoutes);
 app.use(requireAuth);
 app.use("/bike", bikeRoutes);
 app.use("/finance_company", financeCompanyRoutes);
+app.use("/dealer",dealerRoutes);
 
 
 const port = 3000;
