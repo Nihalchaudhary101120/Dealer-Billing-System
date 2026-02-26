@@ -7,14 +7,14 @@ import { useToast } from '../context/ToastContext';
 import { FaWineBottle } from "react-icons/fa";
 import { IoMenu, IoClose } from "react-icons/io5";
 
-const Burger = ({onMenuToggle})=>{
+const Burger = ({ onMenuToggle }) => {
 
     const { user, logout } = useAuth();
     const navigate = useNavigate();
     const { showToast } = useToast();
 
 
-     const handleLogout = async () => {
+    const handleLogout = async () => {
         try {
             await logout();
             showToast("Logged out successfully", "success");
@@ -25,16 +25,16 @@ const Burger = ({onMenuToggle})=>{
         }
     };
 
-     const [open, setOpen] = useState(false);
+    const [open, setOpen] = useState(false);
     const handleMenuToggle = (isOpen) => {
         setOpen(isOpen);
         if (onMenuToggle) {
-            onMenuToggle(isOpen); 
+            onMenuToggle(isOpen);
         }
     };
 
 
-      return (
+    return (
         <>
             <button
                 onClick={() => handleMenuToggle(true)}
@@ -55,11 +55,19 @@ const Burger = ({onMenuToggle})=>{
                 </div>
                 <div className="line"></div>
                 <ul className="burger-ul">
-                    <li><NavLink to={'/stock'} className={({ isActive }) => (isActive ? 'active-link' : '')}>Stock</NavLink></li>
 
-                   
+                    <li><NavLink to={'/invoice'} className={({ isActive }) => (isActive ? 'active-link' : '')}>Invoice </NavLink></li>
 
+                    <li><NavLink to={'/bike'} className={({ isActive }) => (isActive ? 'active-link' : '')}>Bike-Master</NavLink></li>
+
+                    <li><NavLink to={'/bank'} className={({ isActive }) => (isActive ? 'active-link' : '')}>Bank</NavLink></li>
                     
+                    <li><NavLink to={'/dealer'} className={({ isActive }) => (isActive ? 'active-link' : '')}>Dealer </NavLink></li>
+
+
+
+
+
 
                 </ul>
 
@@ -67,15 +75,15 @@ const Burger = ({onMenuToggle})=>{
                     (
                         <div className="user-section">
                             {/* <div className="user-info"> */}
-                                {/* <div className="user-avatar">
+                            {/* <div className="user-avatar">
                                     <i className="fas fa-user-circle"></i>
                                 </div> */}
-                                <div className="user-details">
-                                    <span className="user-name">{user.name}</span>
-                                </div>
+                            <div className="user-details">
+                                <span className="user-name">{user.name}</span>
+                            </div>
                             {/* </div> */}
                             <button className="logout-btn" onClick={handleLogout}>
-                                <i className="fas fa-sign-out-alt"></i> Logout      
+                                <i className="fas fa-sign-out-alt"></i> Logout
                             </button>
                         </div>
                     )
