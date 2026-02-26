@@ -6,8 +6,11 @@ import connectDB from './config/db.js';
 import authRoutes from './routes/authRoutes.js';
 import requireAuth from './middleware/requireAuth.js';
 import bikeRoutes from './routes/bikeRoutes.js';
-import financeCompanyRoutes from  "./routes/financecomapanyRoutes.js";
+import financeCompanyRoutes from "./routes/financecomapanyRoutes.js";
 import dealerRoutes from './routes/dealerRoutes.js';
+import bikeModelRoute from './routes/bikeMoldelController.js';
+import bikeVarientRoute from "./routes/bikeVarientRoutes.js";
+import bikeColorRoute from "./routes/bikeColorRoutes.js";
 
 connectDB();
 const app = express();
@@ -34,7 +37,10 @@ app.use('/auth', authRoutes);
 app.use(requireAuth);
 app.use("/bike", bikeRoutes);
 app.use("/finance_company", financeCompanyRoutes);
-app.use("/dealer",dealerRoutes);
+app.use("/dealer", dealerRoutes);
+app.use("/model", bikeModelRoute);
+app.use("/varient", bikeVarientRoute);
+app.use("/color", bikeColorRoute);
 
 
 const port = 3000;
