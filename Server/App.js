@@ -36,7 +36,7 @@ app.use(session({
 app.use('/auth', authRoutes);
 app.use(requireAuth);
 app.use("/bike", bikeRoutes);
-app.use("/finance_company", financeCompanyRoutes);
+app.use("/bank", financeCompanyRoutes);
 app.use("/dealer", dealerRoutes);
 app.use("/model", bikeModelRoute);
 app.use("/varient", bikeVarientRoute);
