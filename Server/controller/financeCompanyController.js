@@ -3,7 +3,7 @@ import FinanceCompany from "../models/financeCompany.js";
 export const addFinanceCompany = async (req, res) => {
     try {
         const { companyName, companyType, isActive } = req.body;
-        if (!companyName || !companyType) return res.status(400).json({ message: "Fill all fields properly", success: true });
+        if (!companyName || !companyType) return res.status(400).json({ message: "Fill all fields properly", success: false });
         const exist = await FinanceCompany.findOne({ companyName, companyType });
         if (exist) return res.status(400).json({ message: "Finance company already exist", success: false });
 

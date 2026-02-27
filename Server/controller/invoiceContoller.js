@@ -5,7 +5,7 @@ export const addInvoice = async(req,res)=>{
           
         const {invoiceNumber,invoiceDate ,status,customerName , customerFatherName,customerAddress, customerDistrict , customerState,customerPhone ,billType,isHp,financeCompany ,bikeModel,chassisNumber,engineNumber , discount,taxableAmount,cgst,sgst,totalAmount , dealer,createdBy,lockedAt} =req.body;
 
-        if(!invoiceNumber || !invoiceDate || !status || !customerName ||   !customerFatherName || !customerAddress || !customerDistrict || !customerState ||!customerPhone || !billType || !isHp || !financeCompany || !bikeModel || !chassisNumber || !engineNumber || !discount || !taxableAmount || !cgst || !sgst ||!totalAmount ||  !dealer || !createdBy || !lockedAt) return res.status(400).json({message : "Fill all the fields", success:false});
+        if(!invoiceNumber || !invoiceDate || !status || !customerName ||   !customerFatherName || !customerAddress || !customerDistrict || !customerState ||!customerPhone || !billType || !bikeModel || !chassisNumber || !engineNumber || !taxableAmount || !cgst || !sgst ||!totalAmount ||  !dealer || !createdBy || !lockedAt) return res.status(400).json({message : "Fill all the fields", success:false});
 
         const exist = await invoice.findOne({invoiceNumber , invoiceDate});
         if(exist) return res.status(400).json({message : "invoice record already exist",success:false});
@@ -26,10 +26,10 @@ export const getAllInvoice = async(req,res)=>{
 
 
     try{
-        const invoice =await invoice.find();
-        if(!invoice)return res.status(404).json({message:"No invoice found", success:false});
+        const data =await invoice.find();
+        if(!data)return res.status(404).json({message:"No invoice found", success:false});
 
-        res.status(200).json({invoice , message:"Invoice fetched successfully" ,success:true});
+        res.status(200).json({data , message:"Invoice fetched successfully" ,success:true});
 
     }catch(err){
         res.status(500).json({message: "Error Fetching Invoice" , error :err.message});

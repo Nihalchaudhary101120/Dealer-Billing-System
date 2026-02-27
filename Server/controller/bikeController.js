@@ -4,7 +4,7 @@ export const addBike = async (req, res) => {
     try {
         const { brand, modelName, variant, basePrice, colorOptions, hsnCode, isActive } = req.body;
 
-        if (!brand || !modelName || !variant || basePrice==null || !colorOptions || !hsnCode) return res.status(400).json({ message: "Fill all fields", success: false });
+        if (!brand || !modelName || !variant || !basePrice || !colorOptions || !hsnCode) return res.status(400).json({ message: "Fill all fields", success: false });
 
         const exist = await Bike.findOne({ modelName, variant, colorOptions });
         if (exist) return res.status(400).json({ message: "Bike already exist", success: false });

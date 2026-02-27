@@ -84,7 +84,7 @@ const InvoiceSchema = new mongoose.Schema({
 
     dealer:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:dealer
+        ref:"dealer"
     },
     createdBy:{
         type:mongoose.Schema.Types.ObjectId,
