@@ -22,7 +22,10 @@ export const addBike = async (req, res) => {
 
 export const getAllBike = async (req, res) => {
     try {
-        const bikes = await Bike.find();
+        const bikes = await Bike.find()
+            .populate("modelName")
+            .populate("variant")
+            .populate("colorOptions");
         if (!bikes) return res.status(400).json({ message: "Bikes not found", success: false });
         res.status(200).json({ bikes, message: "Bikes fetched successfully", success: true });
     } catch (err) {

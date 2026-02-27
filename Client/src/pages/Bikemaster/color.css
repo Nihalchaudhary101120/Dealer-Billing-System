@@ -1,0 +1,69 @@
+.color-wrapper {
+  padding: 20px;
+}
+
+.color-topbar {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.color-topbar input {
+  padding: 6px 10px;
+  width: 250px;
+}
+
+.color-topbar button {
+  padding: 6px 14px;
+  background: #2c7be5;
+  border: none;
+  color: white;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.color-form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.color-form input {
+  padding: 6px 10px;
+}
+
+.color-form button {
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+.color-grid {
+  display: grid;
+  grid-template-columns: 60px 1fr 200px;
+  padding: 10px;
+  border: 1px solid #ddd;
+}
+
+.header {
+  background: #f4f6f8;
+  font-weight: bold;
+}
+
+.row {
+  background: white;
+}
+
+.actions span {
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.edit { color: #2c7be5; }
+.delete { color: #e63757; }
+.save { color: green; }
+.cancel { color: gray; }
+
+.loading, .no-data {
+  margin-top: 15px;
+  text-align: center;
+}

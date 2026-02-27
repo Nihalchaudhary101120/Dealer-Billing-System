@@ -1,5 +1,5 @@
 import express from "express";
-import { addVarient, deleteVarient, getAllVarient, updateVarient } from "../controller/bikeVersionController.js";
+import { addVarient, deleteVarient, getAllVarient, updateVarient } from "../controller/bikeVarientsController.js";
 
 const router = express.Router();
 
