@@ -11,6 +11,7 @@ import dealerRoutes from './routes/dealerRoutes.js';
 import bikeModelRoute from './routes/bikeMoldelController.js';
 import bikeVarientRoute from "./routes/bikeVarientRoutes.js";
 import bikeColorRoute from "./routes/bikeColorRoutes.js";
+import invoiceRoute from "./routes/invoiceRoutes.js";
 
 connectDB();
 const app = express();
@@ -41,6 +42,7 @@ app.use("/dealer", dealerRoutes);
 app.use("/model", bikeModelRoute);
 app.use("/varient", bikeVarientRoute);
 app.use("/color", bikeColorRoute);
+app.use("/invoice",invoiceRoute);
 
 
 const port = 3000;

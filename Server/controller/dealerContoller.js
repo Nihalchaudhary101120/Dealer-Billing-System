@@ -15,14 +15,14 @@ export const addDealer = async(req,res)=>{
         res.status(200).json({created , message: "created Successfully",success:true});
 
     }catch(err){
-        res.status(500).json({message:"Error creating dealer",error:err.message});
+        res.status(500).json({message:"Error creating dealer",error:err.message ,success:false});
     }
 };
 
 export const getAllDealer = async(req,res)=>{
     try{
         const dealers=await dealer.find();
-        if(!dealers)return res.status(400).json({message:"Dealers not found",success:false});
+        if(!dealers)return res.status(404).json({message:"Dealers not found",success:false});
         res.status(200).json({dealers,message:"Dealers fetched successfully",success:true});
 
     }catch(err){
