@@ -2,14 +2,14 @@ import dealer from "../models/dealer.js";
 
 export const addDealer = async(req,res)=>{
     try{
-        const {dealerName ,branchName , nearBy , address ,state , phone ,gstNumber,isActive}=req.body;
+        const {dealerName ,branchName , nearBy , address ,state , phone ,gstNumber}=req.body;
 
         if(!dealerName || !branchName || !address || !state || !phone|| !gstNumber)return res.status(400).json({message:"Fill all fields",success:false});
 
         const exist = await dealer.findOne({dealerName , branchName});
         if(exist) return res.status(400).json({message: "Dealer already exist" , success:false});
 
-        const created = await dealer.create({dealerName ,branchName, nearBy,address,state, phone,gstNumber,isActive});
+        const created = await dealer.create({dealerName ,branchName, nearBy,address,state, phone,gstNumber});
         if(!created) return res.status(400).json({message:"Error creating in dealer",success:false});
 
         res.status(200).json({created , message: "created Successfully",success:true});

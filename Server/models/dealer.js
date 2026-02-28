@@ -9,7 +9,6 @@ const DealerSchema = new mongoose.Schema({
     state:{type:String},
     phone:{type:Number},
     gstNumber:{type:String , required:true},
-    isActive:{type:Boolean,default:true},
 
 }, { timestamps: true });
 
