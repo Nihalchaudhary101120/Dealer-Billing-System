@@ -9,9 +9,6 @@ const InvoiceSchema = new mongoose.Schema({
         enum: ["DRAFT", "FINAL", "CANCELLED"],
         default: "DRAFT"
     },  
-
-
-    //customer info 
     customerName:{
         type:String,
         required:true
@@ -51,7 +48,7 @@ const InvoiceSchema = new mongoose.Schema({
 
     bikeModel:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:"BikeModel",
+        ref:"Bike",
         required:true   
     },
 

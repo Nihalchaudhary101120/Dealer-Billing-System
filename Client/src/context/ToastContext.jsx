@@ -1,16 +1,16 @@
-import {createContext , useContext ,useState , useCallback} from 'react';
+import { createContext, useContext, useState, useCallback } from 'react';
 import Toast from "../Components/Toast";
 
 const ToastContext = createContext();
 
-export const ToastProvider = ({children}) =>{
-    const [toast , setToast]=useState({
-        visible : false,
-        message: "",
-        type: "success", //success | error
-    });
+export const ToastProvider = ({ children }) => {
+  const [toast, setToast] = useState({
+    visible: false,
+    message: "",
+    type: "success", //success | error
+  });
 
-    
+
   const showToast = useCallback((message, type = "success", duration = 3000) => {
     setToast({ visible: true, message, type });
 
@@ -27,4 +27,4 @@ export const ToastProvider = ({children}) =>{
   );
 };
 
-export const useToast = ()=> useContext(ToastContext);
+export const useToast = () => useContext(ToastContext);

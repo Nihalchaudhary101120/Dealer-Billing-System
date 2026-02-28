@@ -4,6 +4,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import Navbar from '../Components/Navbar';
 import Burger from '../Components/Burger';
 import Dealer from "./Dealer";
+import BikeMaster from './Bikemaster/BikeRoutes';
 
 const Dashboard = () => {
 
@@ -17,9 +18,10 @@ const Dashboard = () => {
 
                 <Routes>
                     <Route path="/dealer" element={<Dealer />}></Route>
+                    <Route path="/bike/*" element={<BikeMaster />} />
                 </Routes>
             </div>
         </>
     )
 }
-export default Dashboard
+export default Dashboard;

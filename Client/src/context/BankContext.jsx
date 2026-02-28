@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import api from '../api/api';
-import {useToast} from './ToastContext';
+import { useToast } from './ToastContext';
 import { useAuth } from './AuthContext';
 
 const BankContext = createContext();

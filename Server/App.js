@@ -8,7 +8,7 @@ import requireAuth from './middleware/requireAuth.js';
 import bikeRoutes from './routes/bikeRoutes.js';
 import financeCompanyRoutes from "./routes/financecomapanyRoutes.js";
 import dealerRoutes from './routes/dealerRoutes.js';
-import bikeModelRoute from './routes/bikeMoldelController.js';
+import bikeModelRoute from './routes/bikeMoldelRoutes.js';
 import bikeVarientRoute from "./routes/bikeVarientRoutes.js";
 import bikeColorRoute from "./routes/bikeColorRoutes.js";
 import invoiceRoute from "./routes/invoiceRoutes.js";

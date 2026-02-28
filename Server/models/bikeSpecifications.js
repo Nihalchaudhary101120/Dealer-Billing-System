@@ -1,21 +1,19 @@
 import mongoose from "mongoose";
 
 const bikeColorSchema = new mongoose.Schema({
-    color: String
+    color: { type: String, unique: true, required: true }
 }, { timestamps: false });
-
-const colorModel = mongoose.model("bike-color", bikeColorSchema);
 
 const bikeVarientSchema = new mongoose.Schema({
-    varient: String
+    varient: { type: String, unique: true, required: true }
 }, { timestamps: false });
-
-const varientModel = mongoose.model("bike-varient", bikeVarientSchema);
 
 const bikeModelSchema = new mongoose.Schema({
-    model: String
+    model: { type: String, unique: true, required: true }
 }, { timestamps: false });
 
-const modelModel = mongoose.model("bike-model", bikeModelSchema);
+const colorModel = mongoose.model("BikeColor", bikeColorSchema);
+const modelModel = mongoose.model("BikeModel", bikeModelSchema);
+const varientModel = mongoose.model("BikeVarient", bikeVarientSchema);
 
 export { colorModel, varientModel, modelModel };
