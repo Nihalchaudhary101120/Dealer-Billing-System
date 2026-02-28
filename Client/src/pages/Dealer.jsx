@@ -24,7 +24,7 @@ const Dealer = () => {
         state: "",
         phone: "",
         gstNumber: ""
-        
+
     });
 
     // const getDealer = (dealer) => {
@@ -57,7 +57,7 @@ const Dealer = () => {
     useEffect(() => {
         if (showModal) {
             setTimeout(() => {
-                modalDealerNameRef.current.focus?.focus();
+                modalDealerNameRef.current?.focus();
             }, 100);
         }
     }, [showModal]);
@@ -157,7 +157,10 @@ const Dealer = () => {
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
 
-                    <button className="salesman-new-item-btn" onClick={() => setShowModal(true)}> +New</button>
+                    <button className="salesman-new-item-btn" onClick={() => {
+                        clearInitialValue();
+                        setShowModal(true);
+                    }}> +New</button>
                 </div>
 
                 <div className="salesman-table-grid salesman-table-header">
@@ -174,7 +177,7 @@ const Dealer = () => {
 
                 {loading && <div className="loading">Loading</div>}
 
-                {filteredDealers.map((dealer, index) =>(
+                {filteredDealers.map((dealer, index) => (
                     <div key={dealer._id || index} className="salesman-table-grid salesman-table-row">
                         <div> {index + 1}</div>
                         {editId === dealer._id ? (
@@ -184,9 +187,8 @@ const Dealer = () => {
                                     ref={dealerNameInputRef}
                                     value={editDealer.dealerName}
                                     onChange={(e) =>
-                                        setEditDealer({ ...editDealer, depoName: e.target.value })
+                                        setEditDealer({ ...editDealer, dealerName: e.target.value })
                                     }
-                                    onKeyDown={(e) => handleKeyNavigation(e, "dealername")}
                                 />
                                 <input
                                     type="text"
@@ -195,7 +197,6 @@ const Dealer = () => {
                                     onChange={(e) =>
                                         setEditDealer({ ...editDealer, branchName: e.target.value })
                                     }
-                                    onKeyDown={(e) => handleKeyNavigation(e, "branchname")}
                                 />
                                 <input
                                     type="text"
@@ -207,7 +208,7 @@ const Dealer = () => {
                                             nearBy: e.target.value,
                                         })
                                     }
-                                    onKeyDown={(e) => handleKeyNavigation(e, "nearby")}
+                                // onKeyDown={(e) => handleKeyNavigation(e, "nearby")}
                                 />
                                 <input
                                     type="text"
@@ -219,7 +220,6 @@ const Dealer = () => {
                                             address: e.target.value,
                                         })
                                     }
-                                    onKeyDown={(e) => handleKeyNavigation(e, "address")}
                                 /><input
                                     type="text"
                                     ref={stateInputRef}
@@ -230,7 +230,6 @@ const Dealer = () => {
                                             state: e.target.value,
                                         })
                                     }
-                                    onKeyDown={(e) => handleKeyNavigation(e, "state")}
                                 /><input
                                     type="text"
                                     ref={phoneInputRef}
@@ -241,7 +240,6 @@ const Dealer = () => {
                                             phone: e.target.value,
                                         })
                                     }
-                                    onKeyDown={(e) => handleKeyNavigation(e, "phone")}
                                 />
                                 <input
                                     type="text"
@@ -253,7 +251,6 @@ const Dealer = () => {
                                             gstNumber: e.target.value,
                                         })
                                     }
-                                    onKeyDown={(e) => handleKeyNavigation(e, "gstnumber")}
                                 />
 
                                 <div className="actions">
@@ -317,7 +314,6 @@ const Dealer = () => {
                                         onChange={(e) =>
                                             setNewDealer({ ...newDealer, dealerName: e.target.value })
                                         }
-                                        onKeyDown={(e) => handleModalKeyNavigation(e, "dealername")}
                                     />
                                 </div>
 
@@ -331,7 +327,6 @@ const Dealer = () => {
                                         onChange={(e) =>
                                             setNewDealer({ ...newDealer, branchName: e.target.value })
                                         }
-                                        onKeyDown={(e) => handleModalKeyNavigation(e, "branchname")}
                                     />
                                 </div>
                                 <div className="form-group">
@@ -344,7 +339,6 @@ const Dealer = () => {
                                         onChange={(e) =>
                                             setNewDealer({ ...newDealer, nearBy: e.target.value })
                                         }
-                                        onKeyDown={(e) => handleModalKeyNavigation(e, "nearby")}
                                     />
                                 </div>
                                 <div className="form-group">
@@ -357,7 +351,6 @@ const Dealer = () => {
                                         onChange={(e) =>
                                             setNewDealer({ ...newDealer, address: e.target.value })
                                         }
-                                        onKeyDown={(e) => handleModalKeyNavigation(e, "address")}
                                     />
                                 </div>
                                 <div className="form-group">
@@ -370,7 +363,6 @@ const Dealer = () => {
                                         onChange={(e) =>
                                             setNewDealer({ ...newDealer, state: e.target.value })
                                         }
-                                        onKeyDown={(e) => handleModalKeyNavigation(e, "state")}
                                     />
                                 </div>
                                 <div className="form-group">
@@ -383,7 +375,6 @@ const Dealer = () => {
                                         onChange={(e) =>
                                             setNewDealer({ ...newDealer, phone: e.target.value })
                                         }
-                                        onKeyDown={(e) => handleModalKeyNavigation(e, "phone")}
                                     />
                                 </div><div className="form-group">
                                     <label>GST-Number</label>
@@ -395,10 +386,9 @@ const Dealer = () => {
                                         onChange={(e) =>
                                             setNewDealer({ ...newDealer, gstNumber: e.target.value })
                                         }
-                                        onKeyDown={(e) => handleModalKeyNavigation(e, "gstnumber")}
                                     />
                                 </div>
-                                
+
 
 
                                 <div className="modal-buttons">
@@ -408,7 +398,6 @@ const Dealer = () => {
                                         ref={modalSaveBtnRef}
                                         disabled={loading}
 
-                                        onKeyDown={(e) => handleModalKeyNavigation(e, "save")}
                                     >
                                         Save
                                     </button>
