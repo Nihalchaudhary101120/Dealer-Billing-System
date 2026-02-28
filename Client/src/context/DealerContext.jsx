@@ -18,7 +18,7 @@ export function DealerProvider({ children }) {
 
             const res = await api.get("/dealer/");
             if (res.data.success) {
-                showToast(res.data.message || "Dealer fetched successfully", "success");
+                // showToast(res.data.message || "Dealer fetched successfully", "success");
                 setDealers(res.data.dealers);
             }
             else {

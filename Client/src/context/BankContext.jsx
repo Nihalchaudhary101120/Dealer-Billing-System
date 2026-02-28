@@ -17,7 +17,7 @@ export function BankProvider({ children }) {
 
             const res = await api.get("/bank/");
             if (res.data.success) {
-                showToast(res.data.message || "Banks fetched successfully", "success");
+                // showToast(res.data.message || "Banks fetched successfully", "success");
                 setBanks(res.data?.data);
             }
             else {

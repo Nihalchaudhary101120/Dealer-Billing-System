@@ -157,7 +157,7 @@ const Bike = () => {
       </div>
 
       <div className="tabular-grid tabular-header">
-        <div>#</div>
+        <div>S NO.</div>
         <div>Brand</div>
         <div>Model</div>
         <div>Variant</div>

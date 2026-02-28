@@ -40,10 +40,12 @@ export const getAllBike = async (req, res) => {
 
 export const updateBike = async (req, res) => {
     try {
-        const updated = await Bike.findByIdAndUpdate(req.params.id, req.body, {
+        let updated = await Bike.findByIdAndUpdate(req.params.id, req.body, {
             new: true,
             runValidators: true
-        }).populate("modelName")
+        });
+        updated = await Bike.findById(updated._id)
+            .populate("modelName")
             .populate("variant")
             .populate("colorOptions");
         if (!updated) return res.status(404).json({ message: "Bike not found", success: false });

@@ -21,7 +21,7 @@ export function BikeProvider({ children }) {
 
             const res = await api.get("/bike/");
             if (res.data.success) {
-                showToast(res.data.message || "Bikes fetched successfully", "success");
+                // showToast(res.data.message || "Bikes fetched successfully", "success");
                 // const bikesWithAliases = res.data.bikes.map(b => ({
                 //     ...b,
                 //     modelName: b.modelName.model,
@@ -124,7 +124,7 @@ export function BikeProvider({ children }) {
 
             const res = await api.get("/model/");
             if (res.data.success) {
-                showToast(res.data.message || "Models fetched successfully", "success");
+                // showToast(res.data.message || "Models fetched successfully", "success");
                 setModels(res.data.models);
             }
             else {
@@ -205,7 +205,7 @@ export function BikeProvider({ children }) {
 
             const res = await api.get("/varient/");
             if (res.data.success) {
-                showToast(res.data.message || "Varients fetched successfully", "success");
+                // showToast(res.data.message || "Varients fetched successfully", "success");
                 setVarients(res.data.varients);
             }
             else {
@@ -286,7 +286,7 @@ export function BikeProvider({ children }) {
 
             const res = await api.get("/color/");
             if (res.data.success) {
-                showToast(res.data.message || "colors fetched", "success");
+                // showToast(res.data.message || "colors fetched", "success");
                 setColors(res.data.colors);
                 console.table(res.data);
             }
