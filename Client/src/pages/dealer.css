@@ -69,7 +69,15 @@
   padding: 10px 14px;
   min-width: 700px; 
 }
-
+.salesman-table-grid2 {
+  display: grid;
+  grid-template-columns: 0.6fr 1fr 1fr 1fr 1fr  ;
+  align-items: center;
+  text-align: left;
+  font-size: 14px;
+  padding: 10px 14px;
+  min-width: 700px; 
+}
 .salesman-table-header {
   background-color: #f9fafb;
   font-weight: 600;
