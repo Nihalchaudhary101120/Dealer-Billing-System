@@ -1,135 +1,150 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo , useRef, useEffect } from "react";
 import "./color.css";
 import { useBike } from "../../context/BikeContext";
 
 const BikeColor = () => {
   const { colors, addColor, updateColor, deleteColor, loading } = useBike();
 
-  const [formVisible, setFormVisible] = useState(false);
+  const [editId, setEditId] = useState(null);
+  const [editValue, setEditValue] = useState("");
+  const [showForm, setShowForm] = useState(false);
   const [newColor, setNewColor] = useState("");
-  const [editing, setEditing] = useState(null); // { id, value }
-  const [search, setSearch] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const addInputRef = useRef(null);
+  const searchRef = useRef(null);
 
-  const filteredColors = useMemo(() => {
-    return colors.filter(c =>
-      c.name.toLowerCase().includes(search.toLowerCase())
-    );
-  }, [colors, search]);
+  useEffect(() => {
+    if (showForm && addInputRef.current) addInputRef.current.focus();
+  }, [showForm]);
 
-  const handleAdd = async () => {
-    const value = newColor.trim();
-    if (!value) return;
+  const filteredColors = colors.filter((item) =>
+    (item?.color ?? "").toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
-    await addColor({ color: value.toUpperCase() });
+  const handleAddColor = async () => {
+    if (newColor.trim() === "") return;
+    await addColor({ color: newColor.toUpperCase() });
     setNewColor("");
-    setFormVisible(false);
   };
 
-  const handleUpdate = async () => {
-    if (!editing?.value.trim()) return;
+  const handleSaveEdit = async (id) => {
+    if (editValue.trim() === "") return;
+    await updateColor(id, { color: editValue.toUpperCase() });
+    setEditId(null);
+    setEditValue("");
+  };
 
-    await updateColor(editing.id, {
-      name: editing.value.toUpperCase()
-    });
-
-    setEditing(null);
+  const handleDelete = async (id) => {
+    await deleteColor(id);
   };
 
   return (
-    <div className="color-wrapper">
-
-      {/* Top Bar */}
-      <div className="color-topbar">
+    <div className="container-wrapper">
+      <div className="top-bar">
         <input
           type="text"
-          placeholder="Search colors..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          ref={searchRef}
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          placeholder="🔍 Search Colors..."
+          className="search-input"
         />
-        <button onClick={() => setFormVisible(true)}>+ New</button>
+        <button className="add-btn-con" onClick={() => setShowForm(true)}>
+          + New
+        </button>
       </div>
 
-      {/* Add Form */}
-      {formVisible && (
-        <div className="color-form">
+      {showForm && (
+        <div className="form-wrapper">
           <input
             type="text"
-            placeholder="Enter color name"
             value={newColor}
+            ref={addInputRef}
             onChange={(e) => setNewColor(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleAdd()}
-            autoFocus
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleAddColor();
+              }
+            }}
+            placeholder="Enter color name"
+            className="name-input"
           />
-          <button onClick={handleAdd}>Add</button>
-          <button onClick={() => setFormVisible(false)}>Cancel</button>
+          <button onClick={handleAddColor}>Add</button>
+          <button onClick={() => setShowForm(false)}>Cancel</button>
         </div>
       )}
 
-      {/* Header */}
-      <div className="color-grid header">
-        <div>#</div>
-        <div>Name</div>
-        <div>Actions</div>
+      <div className="grid-layout header-section">
+        <div>S NO.</div>
+        <div>COLOR</div>
+        <div>ACTIONS</div>
       </div>
 
-      {/* Loading */}
       {loading && <div className="loading">Loading...</div>}
 
-      {/* Data */}
-      {!loading &&
-        filteredColors.map((color, index) => (
-          <div key={color._id} className="color-grid row">
-            <div>{index + 1}</div>
+      {filteredColors.map((item, index) => (
+        <div key={item._id || index} className="grid-layout data-row">
+          <div>{index + 1}</div>
 
-            <div>
-              {editing?.id === color._id ? (
-                <input
-                  value={editing.value}
-                  onChange={(e) =>
-                    setEditing({ ...editing, value: e.target.value })
-                  }
-                  onKeyDown={(e) =>
-                    e.key === "Enter" && handleUpdate()
-                  }
-                  autoFocus
-                />
-              ) : (
-                color.name
-              )}
-            </div>
-
-            <div className="actions">
-              {editing?.id === color._id ? (
-                <>
-                  <span onClick={handleUpdate} className="save">Save</span>
-                  <span onClick={() => setEditing(null)} className="cancel">
-                    Cancel
-                  </span>
-                </>
-              ) : (
-                <>
-                  <span
-                    onClick={() =>
-                      setEditing({ id: color._id, value: color.name })
-                    }
-                    className="edit"
-                  >
-                    Edit
-                  </span>
-                  <span
-                    onClick={() => deleteColor(color._id)}
-                    className="delete"
-                  >
-                    Delete
-                  </span>
-                </>
-              )}
-            </div>
+          <div>
+            {editId === item._id ? (
+              <input
+                type="text"
+                value={editValue}
+                onChange={(e) => setEditValue(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleSaveEdit(item._id);
+                }}
+                autoFocus
+                className="inline-edit"
+              />
+            ) : (
+              item.color
+            )}
           </div>
-        ))}
 
+          <div className="action-buttons">
+            {editId === item._id ? (
+              <>
+                <span
+                  className="btn-save"
+                  onClick={() => handleSaveEdit(item._id)}
+                >
+                  Save
+                </span>{" "}
+                |{" "}
+                <span
+                  className="btn-cancel"
+                  onClick={() => setEditId(null)}
+                >
+                  Cancel
+                </span>
+              </>
+            ) : (
+              <>
+                <span
+                  className="btn-edit"
+                  onClick={() => {
+                    setEditId(item._id);
+                    setEditValue(item.name);
+                  }}
+                >
+                  Edit
+                </span>{" "}
+                |{" "}
+                <span
+                  className="btn-delete"
+                  onClick={() => handleDelete(item._id)}
+                >
+                  Delete
+                </span>
+              </>
+            )}
+          </div>
+        </div>
+      ))}
       {!loading && filteredColors.length === 0 && (
-        <div className="no-data">No colors found</div>
+        <div className="no-data">No colors found.</div>
       )}
     </div>
   );

@@ -2,14 +2,19 @@ import Bike from "../models/bike.js";
 
 export const addBike = async (req, res) => {
     try {
-        const { brand, modelName, variant, basePrice, colorOptions, hsnCode, isActive } = req.body;
+        const { brand, modelName, variant, basePrice, colorOptions, hsnCode } = req.body;
 
         if (!brand || !modelName || !variant || !basePrice || !colorOptions || !hsnCode) return res.status(400).json({ message: "Fill all fields", success: false });
 
-        const exist = await Bike.findOne({ modelName, variant, colorOptions });
+        const exist = await Bike.findOne({ brand, modelName, variant, colorOptions });
         if (exist) return res.status(400).json({ message: "Bike already exist", success: false });
 
-        const created = await Bike.create({ brand, modelName, variant, basePrice, colorOptions, hsnCode, isActive });
+        // create returns a document, not a query – populate separately afterwards
+        let created = await Bike.create({ brand, modelName, variant, basePrice, colorOptions, hsnCode });
+        created = await Bike.findById(created._id)
+            .populate("modelName")
+            .populate("variant")
+            .populate("colorOptions");
 
         if (!created) return res.status(400).json({ message: "Error creating bike document", success: false });
 
@@ -38,7 +43,9 @@ export const updateBike = async (req, res) => {
         const updated = await Bike.findByIdAndUpdate(req.params.id, req.body, {
             new: true,
             runValidators: true
-        });
+        }).populate("modelName")
+            .populate("variant")
+            .populate("colorOptions");
         if (!updated) return res.status(404).json({ message: "Bike not found", success: false });
         res.status(200).json({ updated, message: "Updated successfully", success: true });
     }

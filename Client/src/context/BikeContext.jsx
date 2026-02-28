@@ -22,7 +22,15 @@ export function BikeProvider({ children }) {
             const res = await api.get("/bike/");
             if (res.data.success) {
                 showToast(res.data.message || "Bikes fetched successfully", "success");
-                setBikes(res.data.bikes);
+                // const bikesWithAliases = res.data.bikes.map(b => ({
+                //     ...b,
+                //     modelName: b.modelName.model,
+                //     variant: b.variant.varient,
+                //     colorOptions: b.colorOptions.color
+                // }));
+                console.log('bikes', res.data.bikes);
+                console.log('bikesWithAliases', res.data?.bikes);
+                setBikes(res.data?.bikes);
             }
             else {
                 showToast(res?.data?.message || "Error fetching bikes", "error");
@@ -41,9 +49,17 @@ export function BikeProvider({ children }) {
             setLoading(true);
 
             const res = await api.post("/bike/", payload);
+            console.log(res.data);
             if (res?.data?.success) {
                 showToast(res.data?.message || "Added sucessfully", "success");
-                setBikes(prev => [...prev, res?.data?.created]);
+                // const bikesWithAliases = res.data.created.map(b => ({
+                //     ...b,
+                //     modelName: b.modelName.model,
+                //     variant: b.variant.varient,
+                //     colorOptions: b.colorOptions.color
+                // }));
+                console.log("addedbike", res.data.created);
+                setBikes(prev => [...prev, res.data?.created]);
             } else {
                 showToast(res.data?.message, "error");
             }
@@ -63,8 +79,14 @@ export function BikeProvider({ children }) {
             const res = await api.patch(`/bike/${id}`, payload);
             if (res?.data?.success) {
                 showToast(res.data?.message || "Updated sucessfully", "success");
+                // const bikesWithAliases = res.data.updated.map(b => ({
+                //     ...b,
+                //     modelName: b.modelName.model,
+                //     variant: b.variant.varient,
+                //     colorOptions: b.colorOptions.color
+                // }));
                 setBikes((prev) =>
-                    prev.map((d) => (d._id === id ? res.data.updated : d))
+                    prev.map((d) => (d._id === id ? res.data?.updated : d))
                 );
             } else {
                 showToast(res.data?.message, "error");
@@ -264,8 +286,9 @@ export function BikeProvider({ children }) {
 
             const res = await api.get("/color/");
             if (res.data.success) {
-                showToast(res.data.message || "colors fetched successfully", "success");
+                showToast(res.data.message || "colors fetched", "success");
                 setColors(res.data.colors);
+                console.table(res.data);
             }
             else {
                 showToast(res?.data?.message || "Error fetching bikes", "error");

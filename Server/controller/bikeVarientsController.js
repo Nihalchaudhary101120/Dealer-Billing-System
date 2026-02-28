@@ -6,7 +6,7 @@ export const addVarient = async (req, res) => {
         if (!varient) return res.status(400).json({ message: "varient is required", success: false });
         const exist = await varientModel.findOne({ varient });
         if (exist) return res.status(400).json({ message: "varient already exists", success: false });
-        const created = await colorModel.create({ varient });
+        const created = await varientModel.create({ varient });
         res.status(200).json({ created, message: "Created successfully", success: true });
     } catch (err) {
         res.status(500).json({ message: "Error adding varient", success: false, error: err.message });
@@ -17,7 +17,7 @@ export const getAllVarient = async (req, res) => {
     try {
         const varients = await varientModel.find();
         if (!varients) return res.status(404).json({ message: "No varients found", success: false });
-        res.status(200).json({ colors, message: "varients fetched sucessfully", success: true });
+        res.status(200).json({ varients, message: "varients fetched sucessfully", success: true });
     } catch (err) {
         res.status(500).json({ message: "Error fetching varients", success: false, error: err.message });
     }
