@@ -13,12 +13,18 @@ const bikeModelSchema = new mongoose.Schema({
 }, { timestamps: false });
 
 const bikeSchemeSchema = new mongoose.Schema({
-    scheme : {type:String}
-},{timestamps:false});
+    scheme: { type: String },
+    fromDate: { type: Date, required: true },
+    toDate: { type: Date, required: true },
+    toBike: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Bike"
+    }
+}, { timestamps: false });
 
 const colorModel = mongoose.model("BikeColor", bikeColorSchema);
 const modelModel = mongoose.model("BikeModel", bikeModelSchema);
 const varientModel = mongoose.model("BikeVarient", bikeVarientSchema);
-const schemeModel = mongoose.model("BikeScheme",bikeSchemeSchema);
+const schemeModel = mongoose.model("BikeScheme", bikeSchemeSchema);
 
-export { colorModel, varientModel, modelModel ,schemeModel};
+export { colorModel, varientModel, modelModel, schemeModel };
