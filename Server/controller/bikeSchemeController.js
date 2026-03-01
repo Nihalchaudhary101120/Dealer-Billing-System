@@ -27,7 +27,6 @@ export const getAllScheme = async (req, res) => {
         const schemes = await schemeModel.find({
             fromDate: { $gte: fyStart }
         }).populate("toBike");
-        console.log(schemes);
         if (!schemes) return res.status(404).json({ message: "No scheme found for this year", success: false });
         res.status(200).json({ schemes, message: "schemes fetched sucessfully for this year", success: true });
     } catch (err) {

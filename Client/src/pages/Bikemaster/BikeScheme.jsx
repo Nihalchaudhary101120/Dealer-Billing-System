@@ -175,6 +175,15 @@ const BikeScheme = () => {
         value: ""
     });
 
+    const FormatDate = (isodate) => {
+        if (!isodate) return ""
+        const date = new Date(isodate);
+        const day = String(date.getDate()).padStart(2, "0");
+        const Month = String(date.getMonth() + 1).padStart(2, "0");
+        const Year = date.getFullYear();
+        return `${day}-${Month}-${Year}`
+    }
+
     const filteredSchemes = useMemo(() => {
         return schemes.filter(s =>
             s.scheme?.toLowerCase().includes(search.toLowerCase())
@@ -279,8 +288,8 @@ const BikeScheme = () => {
                 <div key={item._id} className="grid-layout data-row">
                     <div>{index + 1}</div>
                     <div>{item.scheme}</div>
-                    <div>{new Date(item.fromDate).toLocaleDateString()}</div>
-                    <div>{new Date(item.toDate).toLocaleDateString()}</div>
+                    <div>{FormatDate(item.fromDate)}</div>
+                    <div>{FormatDate(item.toDate)}</div>
                     <div>{item.toBike?.model}</div>
                     <div>{item.value}</div>
                     <div className="action-buttons">

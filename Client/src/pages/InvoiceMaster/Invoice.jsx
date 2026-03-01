@@ -1,4 +1,4 @@
-import React, { useState ,useEffect ,useMemo} from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useToast } from "../../context/ToastContext";
 import { useBank } from "../../context/BankContext";
 import { useBike } from "../../context/BikeContext";
@@ -18,7 +18,6 @@ const Invoice = () => {
     variant: ""
   })
 
-  console.log("newBike", newBike);
   const [newInvoice, setNewInvoice] = useState({
     status: "DRAFT",
     customerName: "",
@@ -53,25 +52,34 @@ const Invoice = () => {
   const basePrice = Number(matchedBike?.basePrice || "");
   const disc = Number(newInvoice?.discount || "");
 
-  
-
-  const taxableAmt = useMemo(()=>{
-   return (basePrice*quantity - disc);
-  },[basePrice , disc]);
-  
-  console.log("the discount",disc);
-  console.log("the taxableAmt",taxableAmt);
 
 
+  const taxableAmt = useMemo(() => {
+    return (basePrice * quantity - disc);
+  }, [basePrice, disc]);
 
 
-  if (newInvoice.billType == "Credit") {
+  const today = new Date();
+  // build list of applicable schemes (filter returns an array; default to
+  // empty array if `schemes` isn't ready)
+  const applicableSchemes = Array.isArray(schemes)
+    ? schemes.filter((s) =>
+      String(s.toBike?._id || s.toBike) === String(newBike.model || "") &&
+      new Date(s.fromDate) <= today &&
+      new Date(s.toDate) >= today
+    )
+    : [];
+
+  // keep isHp in sync with billType without updating state during rendering
+  useEffect(() => {
     setNewInvoice((prev) => ({
       ...prev,
-      isHp: true
+      isHp: prev.billType === "Credit",
     }));
-  }
+  }, [newInvoice.billType]);
 
+  const matchScheme = Array.isArray(schemes) ? schemes.find((sm) =>
+    String(sm._id || "") === String(newInvoice.scheme)) : {};
 
 
 
@@ -157,14 +165,7 @@ const Invoice = () => {
                 </select>
               </div>
 
-              <div className="form-group">
-                <label>Base Price</label>
-                <input
-                  type="number"
-                  readOnly
-                  value={matchedBike?.basePrice ?? ""}
-                />
-              </div>
+
 
               <div className="form-group">
                 <label>Status</label>
@@ -268,19 +269,7 @@ const Invoice = () => {
                       }
                     />
                   </div>
-                  <div className="form-group">
-                    <label>Customer Address</label>
-                    <input
-                      type="text"
-                      value={newInvoice.customerAddress}
-                      onChange={(e) =>
-                        setNewInvoice({
-                          ...newInvoice,
-                          customerAddress: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
+
 
 
                   <div className="form-group">
@@ -295,6 +284,27 @@ const Invoice = () => {
                         })
                       }
                     />
+                  </div>
+
+                  <div className="form-group">
+                    <label>Scheme</label>
+                    <select
+                      value={newInvoice.scheme}
+                      // disabled={newInvoice.billType === "CASH"}
+                      onChange={(e) =>
+                        setNewInvoice({
+                          ...newInvoice,
+                          scheme: e.target.value,
+                        })
+                      }
+                    >
+                      <option value="">Select Scheme</option>
+                      {applicableSchemes.map((b) => (
+                        <option key={b._id} value={b._id}>
+                          {b.scheme}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                 </div>
               </div>
@@ -331,35 +341,27 @@ const Invoice = () => {
                 </div>
 
                 <div className="form-group">
-                  <label>Discount</label>
+                  <label>Base Price</label>
                   <input
                     type="number"
-                    value={newInvoice.discount}
-                    onChange={(e) =>
-                      setNewInvoice({
-                        ...newInvoice,
-                        discount: e.target.value,
-                      })
-                    }
+                    readOnly
+                    value={matchedBike?.basePrice ?? ""}
                   />
                 </div>
 
                 <div className="form-group">
-                  <label>Bill Type</label>
-                  <select
-                    value={newInvoice.billType}
+                  <label>Discount</label>
+                  <input
+                    type="number"
+                    value={matchScheme?.value ?? 0}
                     onChange={(e) =>
                       setNewInvoice({
                         ...newInvoice,
-                        billType: e.target.value,
+                        discount: matchScheme.value || 0,
                       })
                     }
-                  >
-                    <option value="CASH">Cash</option>
-                    <option value="CREDIT">Credit</option>
-                  </select>
+                  />
                 </div>
-
               </div>
             </div>
 
@@ -434,29 +436,41 @@ const Invoice = () => {
                   readOnly
                 />
               </div>
+
               <div className="form-group">
-                <label>Scheme</label>
+                <label>Bill Type</label>
                 <select
-                  value={newInvoice.scheme}
-                  // disabled={newInvoice.billType === "CASH"}
+                  value={newInvoice.billType}
                   onChange={(e) =>
                     setNewInvoice({
                       ...newInvoice,
-                      scheme: e.target.value,
+                      billType: e.target.value,
                     })
                   }
                 >
-                  <option value="">Select Scheme</option>
-                  {schemes.map((b) => (
-                    <option key={b._id} value={b._id}>
-                      {b.scheme}
-                    </option>
-                  ))}
+                  <option value="Cash">Cash</option>
+                  <option value="Credit">Credit</option>
                 </select>
               </div>
 
+
             </div>
 
+            <div className="flex">
+              <div className="form-group">
+                <label>Customer Address</label>
+                <input
+                  type="text"
+                  value={newInvoice.customerAddress}
+                  onChange={(e) =>
+                    setNewInvoice({
+                      ...newInvoice,
+                      customerAddress: e.target.value,
+                    })
+                  }
+                />
+              </div>
+            </div>
 
 
 
