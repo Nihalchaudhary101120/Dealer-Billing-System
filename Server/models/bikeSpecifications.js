@@ -12,8 +12,13 @@ const bikeModelSchema = new mongoose.Schema({
     model: { type: String, unique: true, required: true }
 }, { timestamps: false });
 
+const bikeSchemeSchema = new mongoose.Schema({
+    scheme : {type:String}
+},{timestamps:false});
+
 const colorModel = mongoose.model("BikeColor", bikeColorSchema);
 const modelModel = mongoose.model("BikeModel", bikeModelSchema);
 const varientModel = mongoose.model("BikeVarient", bikeVarientSchema);
+const schemeModel = mongoose.model("BikeScheme",bikeSchemeSchema);
 
-export { colorModel, varientModel, modelModel };
+export { colorModel, varientModel, modelModel ,schemeModel};

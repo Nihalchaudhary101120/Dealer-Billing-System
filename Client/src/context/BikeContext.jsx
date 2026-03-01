@@ -14,6 +14,7 @@ export function BikeProvider({ children }) {
     const [models, setModels] = useState([]);
     const [varients, setVarients] = useState([]);
     const [colors, setColors] = useState([]);
+    const [schemes, setSchemes] = useState([]);
 
     async function getAllBikes() {
         try {
@@ -362,15 +363,100 @@ export function BikeProvider({ children }) {
         }
     };
 
+    async function getAllSchemes() {
+        try {
+            setLoading(true);
+
+            const res = await api.get("/scheme/");
+            if (res.data.success) {
+                // showToast(res.data.message || "colors fetched", "success");
+                setSchemes(res.data.schemes);
+                console.table(res.data);
+            }
+            else {
+                showToast(res?.data?.message || "Error fetching Schemes", "error");
+            }
+            return res.data;
+        } catch (err) {
+            console.error(err?.response?.data);
+            throw err;
+        } finally {
+            setLoading(false);
+        }
+    };
+
+
+    async function addScheme(payload) {
+        try {
+            setLoading(true);
+
+            const res = await api.post("/scheme/", payload);
+            if (res?.data?.success) {
+                showToast(res.data?.message || "Added sucessfully", "success");
+                setSchemes(prev => [...prev, res?.data?.created]);
+            } else {
+                showToast(res.data?.message, "error");
+            }
+            return res;
+        } catch (err) {
+            console.error(err?.response?.data);
+            throw err;
+        } finally {
+            setLoading(false);
+        }
+    };
+
+
+
+    async function updateScheme(id, payload) {
+        try {
+            setLoading(true);
+
+            const res = await api.patch(`/scheme/${id}`, payload);
+            if (res?.data?.success) {
+                showToast(res.data?.message || "Updated sucessfully", "success");
+                setSchemes((prev) =>
+                    prev.map((d) => (d._id === id ? res.data.updated : d))
+                );
+            } else {
+                showToast(res.data?.message, "error");
+            }
+        } catch (err) {
+            console.error(err?.response?.data);
+            throw err;
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    async function deleteScheme(id) {
+        try {
+            setLoading(true);
+            const res = await api.delete(`/scheme/${id}`);
+            if (res?.data?.success) {
+                showToast(res.data?.message || "Deleted successfully", "success");
+                setSchemes(prev => prev.filter(c => c._id !== id));
+            } else {
+                showToast(res.data?.message, "error");
+            }
+        } catch (err) {
+            console.error(err?.response?.data);
+            throw err;
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
         if (!isAuthenticated) return;
         getAllBikes();
         getAllModels();
         getAllVarients();
         getAllColors();
+        getAllSchemes();
     }, [isAuthenticated]);
 
-    return <BikeContext.Provider value={{ bikes, loading, deleteBike, addBike, getAllBikes, updateBike, models, getAllModels, addModel, updateModel, deleteModel, varients, getAllVarients, addVarient, updateVarient, deleteVarient, colors, getAllColors, addColor, updateColor, deleteColor }}>{children}</BikeContext.Provider>
+    return <BikeContext.Provider value={{ bikes, loading, deleteBike, addBike, getAllBikes, updateBike, models, getAllModels, addModel, updateModel, deleteModel, varients, getAllVarients, addVarient, updateVarient, deleteVarient, colors, getAllColors, addColor, updateColor, deleteColor ,schemes,getAllSchemes,addScheme,updateScheme,deleteScheme }}>{children}</BikeContext.Provider>
 
 }
 

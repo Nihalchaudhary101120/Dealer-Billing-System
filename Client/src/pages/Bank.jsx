@@ -9,7 +9,7 @@ const BankMaster = () => {
     const handleClose = () => setShowModal(false);
     const { showToast } = useToast();
 
-    const { banks, loading, deleteBank, addBank, getAllBanks, updateBank } = useBank();
+    const { banks, loading, deleteBank, addBank, updateBank } = useBank();
 
     const [editId, setEditId] = useState(null);
     const [editBank, setEditBank] = useState({});
