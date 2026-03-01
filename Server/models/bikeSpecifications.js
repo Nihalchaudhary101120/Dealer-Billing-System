@@ -19,7 +19,8 @@ const bikeSchemeSchema = new mongoose.Schema({
     toBike: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Bike"
-    }
+    },
+    value: { type: Number, required: true }
 }, { timestamps: false });
 
 const colorModel = mongoose.model("BikeColor", bikeColorSchema);
