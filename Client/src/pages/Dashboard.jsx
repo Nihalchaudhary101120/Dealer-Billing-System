@@ -6,6 +6,7 @@ import Burger from '../Components/Burger';
 import Dealer from "./Dealer";
 import BikeMaster from './Bikemaster/BikeRoutes';
 import BankMaster from "./Bank";
+import InvoiceMaster from './InvoiceMaster/InvoiceRoute';
 
 
 const Dashboard = () => {
@@ -21,7 +22,8 @@ const Dashboard = () => {
                 <Routes>
                     <Route path="/dealer" element={<Dealer />}></Route>
                     <Route path="/bike/*" element={<BikeMaster />} />
-                    <Route path="/bank" element = {<BankMaster/>} />
+                    <Route path="/bank" element={<BankMaster />} />
+                    <Route path="/invoice/*" element={<InvoiceMaster />} />
                 </Routes>
             </div>
         </>
