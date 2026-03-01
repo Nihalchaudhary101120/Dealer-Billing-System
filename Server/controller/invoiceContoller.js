@@ -201,6 +201,20 @@ export const updateInvoice = async (req, res) => {
     }
 };
 
+export const getAllDraft = async (req, res) => {
+    try {
+        const today = new Date();
+        const currentYear = today.getFullYear();
+        const firstApril = new Date(currentYear, 3, 1);
+
+        const drafts = await invoice.find({ status: "DRAFT", createdAt: { $gte: firstApril } });
+        if (!drafts) return res.status(404).json({ message: "No drafts found", success: false });
+        res.status(200).json({ message: "Drafts fetched", drafts, success: true });
+    } catch (err) {
+        res.status(500).json({ message: "Error fetching drafts", success: false, error: err.message });
+    }
+};
+
 export const deleteInvoice = async (req, res) => {
     try {
         const deleted = await invoice.findByIdAndDelete(req.params.id);
