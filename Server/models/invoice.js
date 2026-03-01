@@ -86,14 +86,7 @@ const InvoiceSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "dealer"
     },
-    createdBy: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "user"
-    },
-    lockedAt: {
-        type: Date,
-        default: null
-    }
+    
 
 }, { timestamps: true });
 

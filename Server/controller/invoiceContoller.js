@@ -2,9 +2,9 @@ import invoice from "../models/invoice.js";
 
 export const addInvoice = async (req, res) => {
     try {
-        const { status, customerName, customerFatherName, customerAddress, customerDistrict, customerState, customerPhone, customerGstNumber, billType, isHp, financeCompany, bike, chassisNumber, engineNumber, discount, taxableAmount, scheme, cgst, sgst, totalAmount, dealer, createdBy, lockedAt } = req.body;
+        const { status, customerName, customerFatherName, customerAddress, customerDistrict, customerState, customerPhone, customerGstNumber, billType, isHp, financeCompany, bike, chassisNumber, engineNumber, discount, taxableAmount, scheme, cgst, sgst, totalAmount, dealer } = req.body;
 
-        if (!status || !customerName || !customerFatherName || !customerAddress || !customerDistrict || !customerState || !customerPhone || !billType || !bike || !chassisNumber || !engineNumber || !taxableAmount || !cgst || !sgst || !totalAmount || !dealer || !createdBy || !lockedAt) return res.status(400).json({ message: "Fill all the fields", success: false });
+        if (!status || !customerName || !customerFatherName || !customerAddress || !customerDistrict || !customerState || !customerPhone || !billType || !bike || !chassisNumber || !engineNumber || !taxableAmount || !cgst || !sgst || !totalAmount || !dealer) return res.status(400).json({ message: "Fill all the fields", success: false });
 
         const exist = await invoice.findOne({ invoiceNumber, invoiceDate });
         if (exist) return res.status(400).json({ message: "invoice record already exist", success: false });
@@ -23,9 +23,9 @@ export const addInvoice = async (req, res) => {
                 })
                 .sort({ invoiceNumber: -1 });
 
-            created = await invoice.create({ invoiceNumber: (latestInvoice.invoiceNumber + 1), invoiceDate: today, status, customerName, customerFatherName, customerAddress, customerDistrict, customerState, customerPhone, billType, isHp, financeCompany, customerGstNumber, bike, chassisNumber, engineNumber, discount, taxableAmount, cgst, sgst, totalAmount, dealer, createdBy, lockedAt, scheme });
+            created = await invoice.create({ invoiceNumber: (latestInvoice.invoiceNumber + 1), invoiceDate: today, status, customerName, customerFatherName, customerAddress, customerDistrict, customerState, customerPhone, billType, isHp, financeCompany, customerGstNumber, bike, chassisNumber, engineNumber, discount, taxableAmount, cgst, sgst, totalAmount, dealer, scheme });
         } else {
-            created = await invoice.create({ status, customerName, customerFatherName, customerAddress, customerGstNumber, scheme, customerDistrict, customerState, customerPhone, billType, isHp, financeCompany, bike, chassisNumber, engineNumber, discount, taxableAmount, cgst, sgst, totalAmount, dealer, createdBy, lockedAt });
+            created = await invoice.create({ status, customerName, customerFatherName, customerAddress, customerGstNumber, scheme, customerDistrict, customerState, customerPhone, billType, isHp, financeCompany, bike, chassisNumber, engineNumber, discount, taxableAmount, cgst, sgst, totalAmount, dealer,  });
         }
 
         if (!created) res.status(400).json({ message: "Error creating invoice", success: false });
@@ -53,7 +53,7 @@ export const getAllInvoice = async (req, res) => {
 // export const updateInvoice = async (req, res) => {
 //     try {
 //         const { id } = req.params.id;
-//         const { status, customerName, customerFatherName, customerAddress, customerDistrict, customerState, customerPhone, customerGstNumber, billType, isHp, financeCompany, bike, chassisNumber, engineNumber, discount, taxableAmount, scheme, cgst, sgst, totalAmount, dealer, createdBy, lockedAt } = req.body;
+//         const { status, customerName, customerFatherName, customerAddress, customerDistrict, customerState, customerPhone, customerGstNumber, billType, isHp, financeCompany, bike, chassisNumber, engineNumber, discount, taxableAmount, scheme, cgst, sgst, totalAmount, dealer,  } = req.body;
 
 //         let old = await invoice.findById(id);
 //         if (!old) return res.status(404).json({ message: "Invoice not found", success: false });
