@@ -76,7 +76,7 @@
 
 
   display: grid;
-  grid-template-columns: 0.8fr  3fr  1.5fr;
+  grid-template-columns: 0.3fr 2fr 1fr 1fr 1.2fr 1fr 1.2fr;
   padding: 10px 14px;
   align-items: center;
   text-align: left;

@@ -18,7 +18,7 @@ const bikeSchemeSchema = new mongoose.Schema({
     toDate: { type: Date, required: true },
     toBike: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Bike"
+        ref: "BikeModel"
     },
     value: { type: Number, required: true }
 }, { timestamps: false });

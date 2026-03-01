@@ -29,8 +29,6 @@ export function BikeProvider({ children }) {
                 //     variant: b.variant.varient,
                 //     colorOptions: b.colorOptions.color
                 // }));
-                console.log('bikes', res.data.bikes);
-                console.log('bikesWithAliases', res.data?.bikes);
                 setBikes(res.data?.bikes);
             }
             else {
@@ -289,7 +287,6 @@ export function BikeProvider({ children }) {
             if (res.data.success) {
                 // showToast(res.data.message || "colors fetched", "success");
                 setColors(res.data.colors);
-                console.table(res.data);
             }
             else {
                 showToast(res?.data?.message || "Error fetching bikes", "error");
@@ -371,7 +368,7 @@ export function BikeProvider({ children }) {
             if (res.data.success) {
                 // showToast(res.data.message || "colors fetched", "success");
                 setSchemes(res.data.schemes);
-                console.table(res.data);
+                console.log(res.data.schemes);
             }
             else {
                 showToast(res?.data?.message || "Error fetching Schemes", "error");
@@ -456,7 +453,7 @@ export function BikeProvider({ children }) {
         getAllSchemes();
     }, [isAuthenticated]);
 
-    return <BikeContext.Provider value={{ bikes, loading, deleteBike, addBike, getAllBikes, updateBike, models, getAllModels, addModel, updateModel, deleteModel, varients, getAllVarients, addVarient, updateVarient, deleteVarient, colors, getAllColors, addColor, updateColor, deleteColor ,schemes,getAllSchemes,addScheme,updateScheme,deleteScheme }}>{children}</BikeContext.Provider>
+    return <BikeContext.Provider value={{ bikes, loading, deleteBike, addBike, getAllBikes, updateBike, models, getAllModels, addModel, updateModel, deleteModel, varients, getAllVarients, addVarient, updateVarient, deleteVarient, colors, getAllColors, addColor, updateColor, deleteColor, schemes, getAllSchemes, addScheme, updateScheme, deleteScheme }}>{children}</BikeContext.Provider>
 
 }
 
