@@ -10,6 +10,7 @@ const Draft = () => {
   const { showToast } = useToast();
   const [allInvoice, setAllInvoice] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
   const { bikes } = useBike();
 
   const getAllDraft = async () => {
@@ -34,8 +35,8 @@ const Draft = () => {
   };
 
 
-  const handleEdit = async (id) =>{
-    if(!id) return;
+  const handleEdit = async (id) => {
+    if (!id) return;
     navigate(`/invoice/create/${id}`);
   }
 
@@ -57,6 +58,9 @@ const Draft = () => {
     }
   }
 
+  const filteredAllInvoice = allInvoice.filter((i)=>
+    i?.customerName && i.customerName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   useEffect(() => {
     getAllDraft();
@@ -66,6 +70,13 @@ const Draft = () => {
     <div className="trans">
       <div className="trans-container">
         <div className="all-table">
+          <input
+            type="text"
+            placeholder="🔍 Search Customer Draft..."
+            className="salesman-search-box"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
           <div className="headerr">
             <div>CUSTOMER NAME</div>
             <div>CUSTOMER FATHERNAME</div>
@@ -86,7 +97,7 @@ const Draft = () => {
             </div>
           )}
 
-          {allInvoice.map((p, i) => {
+          {filteredAllInvoice.map((p, i) => {
 
             const matchedBike = Array.isArray(bikes) ? bikes.find((b) =>
               String(b._id) === String(p.bike) || ""

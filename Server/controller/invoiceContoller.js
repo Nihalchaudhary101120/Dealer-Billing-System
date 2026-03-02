@@ -164,7 +164,7 @@ export const updateInvoice = async (req, res) => {
             sgst,
             totalAmount,
             dealer,
-           
+
         } = req.body;
 
         const old = await invoice.findById(id);
@@ -251,26 +251,26 @@ export const getAllDraft = async (req, res) => {
     }
 };
 
-export const getInvoiceById = async(req,res)=>{
-    try{
-        const {id}= req.params;
-        if(!id) return res.status(400).json({message:"No invoice found", success:false});
-        const draftInvoice=  await invoice.findById(id).populate({
-            path:"bike",
-            populate:[
-                {path:"modelName"},
-                {path:"variant"},
-                {path:"colorOptions"}
+export const getInvoiceById = async (req, res) => {
+    try {
+        const { id } = req.params;
+        if (!id) return res.status(400).json({ message: "No invoice found", success: false });
+        const draftInvoice = await invoice.findById(id).populate({
+            path: "bike",
+            populate: [
+                { path: "modelName" },
+                { path: "variant" },
+                { path: "colorOptions" }
             ]
         });
 
-        if(!draftInvoice)return res.status(404).json({message:"No invoice found",success:false});
-        res.status(200).json({message:" Drafted Invoice fetched successfully" , draftInvoice,success:true});
+        if (!draftInvoice) return res.status(404).json({ message: "No invoice found", success: false });
+        res.status(200).json({ message: " Drafted Invoice fetched successfully", draftInvoice, success: true });
     }
-    catch(err){
-        res.status(500).json({message:"Error to fetched drafted Invoice",error:err.message});
+    catch (err) {
+        res.status(500).json({ message: "Error to fetched drafted Invoice", error: err.message });
     }
-};  
+};
 
 export const deleteInvoice = async (req, res) => {
     try {
@@ -280,5 +280,29 @@ export const deleteInvoice = async (req, res) => {
     }
     catch (err) {
         res.status(500).json({ message: "Error deleting Invoice", error: err.message });
+    }
+};
+
+
+export const printInvoice = async (req, res) => {
+    try {
+
+        const { startDate, endDate } = req.body;
+        if ((!startDate || !endDate)&&(startDate<=endDate)) return res.status(400).json({ message: "All Field are reequired", success: false });
+
+        const start = new Date(startDate);
+        start.setHours(0, 0, 0, 0);
+        const end = new Date(endDate);
+        end.setHours(23, 59, 59, 999);
+
+        const inv =await invoice.find({status:"FINAL",date:{$gte:start,$lte:end}});
+
+        if(!inv) return res.status(404).json({message:"No invoice found",success:false});
+
+        res.status(200).json({message:"invoice fetched successfully",inv,success:true});
+
+    }
+    catch (err) {
+        res.status(500).json({message:"Error fetching Invoice",error:err.message});
     }
 };

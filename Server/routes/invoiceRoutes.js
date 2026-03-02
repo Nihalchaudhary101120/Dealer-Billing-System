@@ -1,5 +1,5 @@
 import express from 'express';
-import {addInvoice, deleteInvoice , getAllDraft, getAllInvoice , updateInvoice ,getInvoiceById} from "../controller/invoiceContoller.js";
+import {addInvoice, deleteInvoice , getAllDraft, getAllInvoice , updateInvoice ,getInvoiceById,printInvoice} from "../controller/invoiceContoller.js";
 const router = express.Router();
 
 router.post("/",addInvoice);
@@ -8,5 +8,6 @@ router.get("/draft", getAllDraft);
 router.patch("/:id" , updateInvoice);
 router.delete("/:id", deleteInvoice);
 router.get("/:id",getInvoiceById);
+router.post("/print",printInvoice);
 
 export default router;
