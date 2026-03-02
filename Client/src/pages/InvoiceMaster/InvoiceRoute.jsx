@@ -22,6 +22,7 @@ const InvoiceMaster = () => {
                     <Route path="all-invoice" element={<AllInvoice />} />
                     <Route path="draft" element={<Draft />} />
                     <Route path="create" element={<Invoice />} />
+                    <Route path="create/:id?" element={<Invoice/>}/>
                 </Routes>
             </div>
         </>

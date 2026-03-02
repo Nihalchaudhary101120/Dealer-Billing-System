@@ -5,13 +5,15 @@ import { useBike } from "../../context/BikeContext";
 import { useDealer } from "../../context/DealerContext";
 import "./invoice.css";
 import api from "../../api/api";
+import { useParams } from "react-router-dom";
 
 const Invoice = () => {
   const { showToast } = useToast();
   const { dealers } = useDealer();
   const { bikes, schemes, colors, models, varients } = useBike();
   const { banks } = useBank();
-
+  const { id } = useParams();
+  const isEditMode = !!id;
   const [quantity, setQuantity] = useState(1);
   const [newBike, setNewBike] = useState({
     model: "",
@@ -108,14 +110,49 @@ const Invoice = () => {
     }));
   }, [newInvoice.billType, taxableAmt, finalAmt, matchedBike]);
 
+  useEffect(() => {
+    if (!id) return;
+    const fetchDraft = async () => {
+      try {
+        const res = await api.get(`/invoice/${id}`);
+        showToast(res.data.message, "success");
+
+        if (res.data?.success) {
+          setNewInvoice(res.data?.draftInvoice);
+          setNewBike({
+            model: res.data?.draftInvoice?.bike?.modelName?._id ||"",
+            color: res.data?.draftInvoice?.bike?.colorOptions?._id ||"",
+            variant: res.data?.draftInvoice?.bike?.variant?._id || ""
+          });
+        }
+      }
+      catch (err) {
+        showToast(err.response?.data?.message || "Error in fetching draft invoice");
+      }
+    };
+
+    fetchDraft();
+  }, [id]);
 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       setLoading(true);
-      console.log("newInvoice", newInvoice);
-      const res = await api.post("/invoice/", newInvoice);
+
+      const payLoad= {
+        ...newInvoice,
+        status:isEditMode ?"FINAL" : "DRAFT",
+      };
+
+      let res;
+
+      if(isEditMode){
+        res = await api.patch(`/invoice/${id}`,payLoad);
+      }else{
+               res = await api.post("/invoice/", payLoad);
+
+      }
       console.log("invoice", res.data);
       if (res.data?.success) {
         showToast(res.data.message, "success");
@@ -520,7 +557,7 @@ const Invoice = () => {
               </div>
 
               <div className="form-group">
-                <button type="submit" onClick={handleSubmit} style={{ backgroundColor: "red", margin: "3vh 0 0 0" }}>Submit</button>
+                <button type="submit" onClick={handleSubmit} style={{ backgroundColor: "red", margin: "3vh 0 0 0" }}>{isEditMode ? "Final" :"Submit"}</button>
               </div>
 
               <div className="form-group">

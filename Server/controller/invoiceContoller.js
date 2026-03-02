@@ -60,7 +60,7 @@ export const addInvoice = async (req, res) => {
 
             created = await invoice.create({ invoiceNumber: (latestInvoice.invoiceNumber + 1), invoiceDate: today, status, customerName, customerFatherName, customerAddress, customerDistrict, customerState, customerPhone, billType, isHp, financeCompany, customerGstNumber, bike, chassisNumber, engineNumber, discount, taxableAmount, cgst, sgst, totalAmount, dealer, scheme });
         } else {
-            created = await invoice.create({ status, customerName, customerFatherName, customerAddress, customerGstNumber, scheme, customerDistrict, customerState, customerPhone, billType, isHp, financeCompany, bike, chassisNumber, engineNumber, discount, taxableAmount, cgst, sgst, totalAmount, dealer,  });
+            created = await invoice.create({ status, customerName, customerFatherName, customerAddress, customerGstNumber, scheme, customerDistrict, customerState, customerPhone, billType, isHp, financeCompany, bike, chassisNumber, engineNumber, discount, taxableAmount, cgst, sgst, totalAmount, dealer, });
         }
 
         if (!created) res.status(400).json({ message: "Error creating invoice", success: false });
@@ -136,6 +136,8 @@ export const getAllInvoice = async (req, res) => {
 // };
 
 
+
+
 export const updateInvoice = async (req, res) => {
     try {
         const { id } = req.params;
@@ -162,8 +164,7 @@ export const updateInvoice = async (req, res) => {
             sgst,
             totalAmount,
             dealer,
-            createdBy,
-            lockedAt
+           
         } = req.body;
 
         const old = await invoice.findById(id);
@@ -176,7 +177,7 @@ export const updateInvoice = async (req, res) => {
 
         const today = new Date();
         const currentYear = today.getFullYear();
-        const firstApril = new Date(currentYear, 3, 1);
+        const firstApril = new Date(currentYear, 2, 1);
 
         // 🔥 If converting DRAFT → FINAL
         if (status === "FINAL" && old.status === "DRAFT") {
@@ -207,7 +208,7 @@ export const updateInvoice = async (req, res) => {
         old.customerGstNumber = customerGstNumber;
         old.billType = billType;
         old.isHp = isHp;
-        old.financeCompany = financeCompany;
+        old.financeCompany = financeCompany || null;
         old.bike = bike;
         old.chassisNumber = chassisNumber;
         old.engineNumber = engineNumber;
@@ -218,8 +219,6 @@ export const updateInvoice = async (req, res) => {
         old.sgst = sgst;
         old.totalAmount = totalAmount;
         old.dealer = dealer;
-        old.createdBy = createdBy;
-        old.lockedAt = lockedAt;
 
         // ensure financeCompany is null if blank on updates as well
         if (financeCompany === "") old.financeCompany = null;
@@ -242,7 +241,7 @@ export const getAllDraft = async (req, res) => {
     try {
         const today = new Date();
         const currentYear = today.getFullYear();
-        const firstApril = new Date(currentYear, 3, 1);
+        const firstApril = new Date(currentYear, 2, 1);
 
         const drafts = await invoice.find({ status: "DRAFT", createdAt: { $gte: firstApril } });
         if (!drafts) return res.status(404).json({ message: "No drafts found", success: false });
@@ -251,6 +250,27 @@ export const getAllDraft = async (req, res) => {
         res.status(500).json({ message: "Error fetching drafts", success: false, error: err.message });
     }
 };
+
+export const getInvoiceById = async(req,res)=>{
+    try{
+        const {id}= req.params;
+        if(!id) return res.status(400).json({message:"No invoice found", success:false});
+        const draftInvoice=  await invoice.findById(id).populate({
+            path:"bike",
+            populate:[
+                {path:"modelName"},
+                {path:"variant"},
+                {path:"colorOptions"}
+            ]
+        });
+
+        if(!draftInvoice)return res.status(404).json({message:"No invoice found",success:false});
+        res.status(200).json({message:" Drafted Invoice fetched successfully" , draftInvoice,success:true});
+    }
+    catch(err){
+        res.status(500).json({message:"Error to fetched drafted Invoice",error:err.message});
+    }
+};  
 
 export const deleteInvoice = async (req, res) => {
     try {
