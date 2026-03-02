@@ -79,10 +79,18 @@ const Invoice = () => {
     String(sm._id || "") === String(newInvoice.scheme)) : {};
 
   useEffect(() => {
-    if (matchScheme && typeof matchScheme.value !== 'undefined') {
-      setNewInvoice(prev => ({ ...prev, discount: matchScheme.value || 0 }));
+    if (!newInvoice.scheme) {
+      setNewInvoice(prev => ({ ...prev, discount: 0 }));
+      return;
     }
-  }, [matchScheme]);
+
+    if (matchScheme?.value != null) {
+      setNewInvoice(prev => ({
+        ...prev,
+        discount: Number(matchScheme.value)
+      }));
+    }
+  }, [newInvoice.scheme]);
 
   console.log("matched scheme", matchScheme);
 
@@ -142,7 +150,7 @@ const Invoice = () => {
 
       const payLoad = {
         ...newInvoice,
-        status: isEditMode ? "FINAL" : "DRAFT",
+        status: newInvoice.status,
       };
 
       let res;

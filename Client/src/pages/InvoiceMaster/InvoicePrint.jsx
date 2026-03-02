@@ -1,10 +1,17 @@
 import React, { useRef, useEffect, useState } from "react";
 import api from "../../api/api";
+import { useDealer } from "../../context/DealerContext";
+import { useBank } from "../../context/BankContext";
 
 const InvoicePrint = ({ invoiceId, onClose }) => {
   const printRef = useRef();
   const [invoice, setInvoice] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { dealers } = useDealer();
+  const { banks } = useBank();
+
+  const matchDealer = Array.isArray(dealers) ? dealers.find((d) => String(d._id) === String(invoice?.dealer ?? "")) : {};
+  const matchFinance = Array.isArray(banks) ? banks.find((d) => String(d._id) === String(invoice?.financeCompany ?? "")) : {};
 
   useEffect(() => {
     const fetchInvoice = async () => {
@@ -30,31 +37,42 @@ const InvoicePrint = ({ invoiceId, onClose }) => {
         <head>
           <title>Invoice #${invoice?.invoiceNumber || ""}</title>
           <style>
+            @page { size: A4 portrait; margin: 10mm 12mm; }
             * { margin: 0; padding: 0; box-sizing: border-box; }
+            html, body { width: 100%; height: 100%; }
             body { font-family: Arial, sans-serif; font-size: 11px; color: #000; background: #fff; }
-            .invoice-wrapper { width: 794px; margin: 0 auto; padding: 24px 28px; }
-            .invoice-title { text-align: center; font-size: 15px; font-weight: bold; letter-spacing: 1px; margin-bottom: 8px; border-bottom: 2px solid #000; padding-bottom: 6px; }
-            .invoice-meta { display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 10px; }
-            .parties { display: flex; justify-content: space-between; margin-bottom: 12px; border: 1px solid #ccc; padding: 8px 10px; }
+            .invoice-wrapper {
+              width: 100%;
+              height: calc(297mm - 20mm);
+              padding: 16px 20px;
+              display: flex;
+              flex-direction: column;
+              overflow: hidden;
+            }
+            .invoice-title { text-align: center; font-size: 15px; font-weight: bold; letter-spacing: 1px; margin-bottom: 6px; border-bottom: 2px solid #000; padding-bottom: 5px; }
+            .invoice-meta { display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 8px; }
+            .parties { display: flex; justify-content: space-between; margin-bottom: 10px; border: 1px solid #ccc; padding: 7px 10px; }
             .party-box { width: 48%; }
-            .party-box h4 { font-size: 11px; font-weight: bold; border-bottom: 1px solid #ccc; padding-bottom: 3px; margin-bottom: 5px; }
-            .party-box p { font-size: 10px; line-height: 1.5; }
-            table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
+            .party-box h4 { font-size: 11px; font-weight: bold; border-bottom: 1px solid #ccc; padding-bottom: 3px; margin-bottom: 5px; text-align: left; }
+            .party-box p { font-size: 10px; line-height: 1.5; text-align: left; }
+            table { width: 100%; border-collapse: collapse; margin-bottom: 6px; }
             table th { background: #f0f0f0; font-size: 10px; font-weight: bold; border: 1px solid #999; padding: 4px 5px; text-align: center; }
             table td { border: 1px solid #ccc; padding: 4px 5px; font-size: 10px; text-align: center; }
             table td:first-child { text-align: left; }
-            .totals { margin-left: auto; width: 280px; margin-bottom: 10px; }
+            .totals { margin-left: auto; width: 280px; margin-bottom: 8px; }
             .totals table { width: 100%; }
             .totals td { border: none; padding: 2px 5px; font-size: 10px; }
             .totals td:last-child { text-align: right; font-weight: 500; }
             .net-total td { font-weight: bold; font-size: 11px; border-top: 2px solid #000; }
-            .amount-words { font-size: 10px; font-style: italic; margin-bottom: 10px; border: 1px solid #ccc; padding: 5px 8px; }
-            .part-section { border: 1px solid #ccc; padding: 7px 10px; margin-bottom: 10px; }
-            .part-section h4 { font-size: 10px; font-weight: bold; margin-bottom: 5px; border-bottom: 1px solid #eee; padding-bottom: 3px; }
+            .amount-words { font-size: 10px; font-style: italic; margin-bottom: 8px; border: 1px solid #ccc; padding: 5px 8px; }
+            .part-section { border: 1px solid #ccc; padding: 6px 10px; margin-bottom: 8px; }
+            .part-section h4 { font-size: 10px; font-weight: bold; margin-bottom: 4px; border-bottom: 1px solid #eee; padding-bottom: 3px; }
             .part-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; font-size: 10px; }
             .part-grid span { font-weight: bold; }
-            .footer-note { font-size: 9px; color: #555; margin-bottom: 10px; line-height: 1.5; }
-            .signature { text-align: right; margin-top: 20px; font-size: 10px; }
+            .ex-showroom { font-size: 10px; margin-bottom: 6px; }
+            .spacer { flex: 1; min-height: 8px; }
+            .footer-note { font-size: 9px; color: #444; line-height: 1.6; padding-top: 8px; border-top: 1px dashed #ccc; }
+            .signature { text-align: right; font-size: 11px; margin-top: 16px; }
             .signature p { font-weight: bold; }
             .badge { display: inline-block; background: #000; color: #fff; font-size: 9px; padding: 1px 6px; border-radius: 2px; margin-left: 6px; }
             @media print {
@@ -138,6 +156,16 @@ const InvoicePrint = ({ invoiceId, onClose }) => {
     return inWords(n) + " Only";
   };
 
+  const getRoundedAmount = (final) => {
+    const num = Number(final);
+    if (isNaN(num)) return { rounded: 0, roundOff: 0 };
+
+    const rounded = Math.round(num);
+    const roundOff = Number((rounded - num).toFixed(2));
+
+    return { rounded, roundOff };
+  };
+
   return (
     <div style={styles.overlay} onClick={(e) => e.target === e.currentTarget && onClose()}>
       <div style={styles.modal}>
@@ -174,12 +202,12 @@ const InvoicePrint = ({ invoiceId, onClose }) => {
                 <div style={printStyles.partyBox}>
                   <h4 style={printStyles.partyTitle}>FROM — DEALER</h4>
                   <p style={printStyles.partyText}>
-                    <strong>{dealer.branchName || "N/A"}</strong><br />
-                    {dealer.address || ""}<br />
-                    {dealer.city || ""}{dealer.state ? ", " + dealer.state : ""}<br />
-                    {dealer.pincode || ""}<br />
-                    {dealer.phone ? "Ph: " + dealer.phone : ""}<br />
-                    {dealer.gstNumber ? "GST: " + dealer.gstNumber : ""}
+                    <strong>{matchDealer.branchName || "N/A"}</strong><br />
+                    {matchDealer?.nearBy || ""}<br />
+                    {matchDealer?.address || ""}<br />
+                    {matchDealer.state}<br />
+                    {matchDealer.phone ? "Ph: " + matchDealer.phone : ""}<br />
+                    {matchDealer.gstNumber ? "GST: " + matchDealer.gstNumber : ""}
                   </p>
                 </div>
                 <div style={{ width: "1px", background: "#ccc", margin: "0 10px" }} />
@@ -193,9 +221,7 @@ const InvoicePrint = ({ invoiceId, onClose }) => {
                     {invoice.customerPhone ? "Mob: " + invoice.customerPhone : ""}<br />
                     {invoice.customerGstNumber ? "GST: " + invoice.customerGstNumber : ""}
                     <br />Bill Type: <strong>{invoice.billType}</strong>
-                    {invoice.isHp && invoice.financeCompany && (
-                      <><br />Finance: <strong>{invoice.financeCompany?.companyName || invoice.financeCompany}</strong></>
-                    )}
+
                   </p>
                 </div>
               </div>
@@ -258,12 +284,12 @@ const InvoicePrint = ({ invoiceId, onClose }) => {
                     )}
                     <tr>
                       <td style={printStyles.sumLabel}>Round Off</td>
-                      <td style={printStyles.sumValue}>{roundOff}</td>
+                      <td style={printStyles.sumValue}>{getRoundedAmount(invoice?.totalAmount || 0).roundOff}</td>
                     </tr>
                     <tr style={{ borderTop: "2px solid #000" }}>
                       <td style={{ ...printStyles.sumLabel, fontWeight: "bold", fontSize: "12px", paddingTop: "5px" }}>Net Total</td>
                       <td style={{ ...printStyles.sumValue, fontWeight: "bold", fontSize: "12px", paddingTop: "5px" }}>
-                        ₹{Number(netTotal).toLocaleString("en-IN", { minimumFractionDigits: 2 })}
+                        ₹{Number(getRoundedAmount(invoice?.totalAmount || 0).rounded).toLocaleString("en-IN", { minimumFractionDigits: 2 })}
                       </td>
                     </tr>
                   </tbody>
@@ -300,18 +326,33 @@ const InvoicePrint = ({ invoiceId, onClose }) => {
               </div>
 
               {/* Ex Showroom */}
-              <div style={{ fontSize: "10px", marginBottom: "8px" }}>
-                Ex Showroom Price (Excluding All Discount): <strong>₹{(Number(taxable) + Number(sgstAmt) + Number(cgstAmt)).toLocaleString("en-IN", { minimumFractionDigits: 2 })}</strong>
+              <div className="ex-showroom" style={{ fontSize: "10px", marginBottom: "6px" }}>
+                Ex Showroom Price : <strong>&#8377;{(Number(getRoundedAmount(invoice?.totalAmount || 0).rounded)).toLocaleString("en-IN", { minimumFractionDigits: 2 })}</strong>
               </div>
 
+              <p style={printStyles.partyText}>
+                {invoice.isHp && invoice.financeCompany && (
+                  <><br />HP: <strong>{matchFinance?.companyName || ""}</strong></>
+                )}
+              </p>
+              <p style={printStyles.partyText}>
+                Received: <br />
+                  <span>1. Tools:     (y/n)</span><br />
+                  <span>2. ManualBook-E:     (y/n)</span>
+              </p>
+
+
+              {/* Spacer — fills remaining space so note/signature sit at bottom */}
+              <div className="spacer" style={{ flex: 1, minHeight: "8px" }} />
+
               {/* Note */}
-              <div style={printStyles.note}>
+              <div className="footer-note" style={printStyles.note}>
                 <strong>Note:</strong> Goods once sold will not be taken back.<br />
                 I hereby agree to opt-in to receive promotional / service communication via email, SMS, mailers, calls &amp; social media from the Authorised Dealers / OEM. : (Y / N)
               </div>
 
               {/* Signature */}
-              <div style={printStyles.signature}>
+              <div className="signature" style={printStyles.signature}>
                 <p>For {dealer.branchName || "Authorised Dealer"}</p>
                 <br /><br />
                 <p>____________________________</p>
@@ -357,9 +398,11 @@ const styles = {
 /* ── Print/preview content styles ── */
 const printStyles = {
   wrapper: {
-    width: "100%", background: "#fff", padding: "24px 28px",
+    width: "100%", background: "#fff", padding: "16px 20px",
     fontFamily: "Arial, sans-serif", fontSize: "11px", color: "#000",
     boxShadow: "0 2px 12px rgba(0,0,0,0.1)",
+    display: "flex", flexDirection: "column",
+    minHeight: "calc(297mm - 20mm)",
   },
   title: {
     textAlign: "center", fontSize: "15px", fontWeight: "bold", letterSpacing: "1px",
@@ -377,7 +420,7 @@ const printStyles = {
     fontSize: "10px", fontWeight: "bold", borderBottom: "1px solid #ddd",
     paddingBottom: "3px", marginBottom: "5px", letterSpacing: "0.5px",
   },
-  partyText: { fontSize: "10px", lineHeight: "1.6" },
+  partyText: { fontSize: "10px", lineHeight: "1.6", textAlign: "left" },
   table: { width: "100%", borderCollapse: "collapse", marginBottom: "8px" },
   th: {
     background: "#f0f0f0", fontSize: "10px", fontWeight: "bold",
@@ -398,9 +441,10 @@ const printStyles = {
   },
   note: {
     fontSize: "9px", color: "#444", lineHeight: "1.6",
-    marginBottom: "16px", borderTop: "1px dashed #ccc", paddingTop: "8px",
+    paddingTop: "8px", borderTop: "1px dashed #ccc",
   },
   signature: { textAlign: "right", fontSize: "11px" },
 };
 
 export default InvoicePrint;
+
