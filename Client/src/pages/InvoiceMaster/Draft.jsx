@@ -86,7 +86,7 @@ const Draft = () => {
             <div>ACTIONS</div>
           </div>
 
-          {allInvoice.length === 0 && (
+          {filteredAllInvoice.length === 0 && (
             <div style={{
               padding: '40px',
               textAlign: 'center',

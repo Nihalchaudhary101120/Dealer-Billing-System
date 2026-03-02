@@ -120,8 +120,8 @@ const Invoice = () => {
         if (res.data?.success) {
           setNewInvoice(res.data?.draftInvoice);
           setNewBike({
-            model: res.data?.draftInvoice?.bike?.modelName?._id ||"",
-            color: res.data?.draftInvoice?.bike?.colorOptions?._id ||"",
+            model: res.data?.draftInvoice?.bike?.modelName?._id || "",
+            color: res.data?.draftInvoice?.bike?.colorOptions?._id || "",
             variant: res.data?.draftInvoice?.bike?.variant?._id || ""
           });
         }
@@ -140,17 +140,20 @@ const Invoice = () => {
     try {
       setLoading(true);
 
-      const payLoad= {
+      const payLoad = {
         ...newInvoice,
-        status:isEditMode ?"FINAL" : "DRAFT",
+        status: isEditMode ? "FINAL" : "DRAFT",
       };
 
       let res;
 
-      if(isEditMode){
-        res = await api.patch(`/invoice/${id}`,payLoad);
-      }else{
-               res = await api.post("/invoice/", payLoad);
+      if (isEditMode) {
+        if (!window.confirm('Are you sure you want to update this invoice?')) {
+          return;
+        }
+        res = await api.patch(`/invoice/${id}`, payLoad);
+      } else {
+        res = await api.post("/invoice/", payLoad);
 
       }
       console.log("invoice", res.data);
@@ -557,7 +560,7 @@ const Invoice = () => {
               </div>
 
               <div className="form-group">
-                <button type="submit" onClick={handleSubmit} style={{ backgroundColor: "red", margin: "3vh 0 0 0" }}>{isEditMode ? "Final" :"Submit"}</button>
+                <button type="submit" onClick={handleSubmit} style={{ backgroundColor: "red", margin: "3vh 0 0 0" }}>{isEditMode ? "Final" : "Submit"}</button>
               </div>
 
               <div className="form-group">

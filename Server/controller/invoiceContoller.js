@@ -45,8 +45,11 @@ export const addInvoice = async (req, res) => {
         }
 
         const today = new Date();
-        const currentYear = today.getFullYear();
-        const firstApril = new Date(currentYear, 3, 1);
+        const year = today.getMonth() < 3
+            ? today.getFullYear() - 1
+            : today.getFullYear();
+
+        const firstApril = new Date(year, 3, 1);
 
         let latestInvoice = {};
         let created = {};
@@ -79,64 +82,11 @@ export const getAllInvoice = async (req, res) => {
         if (!data) return res.status(404).json({ message: "No invoice found", success: false });
 
         res.status(200).json({ data, message: "Invoice fetched successfully", success: true });
-
     } catch (err) {
         res.status(500).json({ message: "Error Fetching Invoice", error: err.message });
 
     }
 };
-
-// export const updateInvoice = async (req, res) => {
-//     try {
-//         const { id } = req.params.id;
-//         const { status, customerName, customerFatherName, customerAddress, customerDistrict, customerState, customerPhone, customerGstNumber, billType, isHp, financeCompany, bike, chassisNumber, engineNumber, discount, taxableAmount, scheme, cgst, sgst, totalAmount, dealer,  } = req.body;
-
-//         let old = await invoice.findById(id);
-//         if (!old) return res.status(404).json({ message: "Invoice not found", success: false });
-
-//         const today = new Date();
-//         const currentYear = today.getFullYear();
-//         const firstApril = new Date(currentYear, 3, 1);
-
-//         let latestInvoice = {};
-//         let updated = {};
-//         if (status === "FINAL" && old.status === "DRAFT") {
-//             latestInvoice = await invoice
-//                 .findOne({
-//                     status: "FINAL",
-//                     invoiceDate: { $gte: firstApril }
-//                 })
-//                 .sort({ invoiceNumber: -1 });
-
-//             old.invoiceNumber = latestInvoice.invoiceNumber + 1;
-//             old.invoiceDate = today;
-//             old.status = status;
-//             old.customerName = customerName;
-//             old.customerAddress = customerAddress;
-//             old.customerDistrict = customerDistrict;
-//             old.customerState = customerState;
-//             old.customerFatherName = customerFatherName;
-//             old.customerPhone = customerPhone;
-//             old.customerGstNumber = customerGstNumber;
-//             old.
-
-
-//             updated = await old.save();
-//         } else {
-//             created = await invoice.create({ status, customerName, customerFatherName, customerAddress, customerGstNumber, scheme, customerDistrict, customerState, customerPhone, billType, isHp, financeCompany, bike, chassisNumber, engineNumber, discount, taxableAmount, cgst, sgst, totalAmount, dealer, createdBy, lockedAt });
-//         }
-
-
-//         if (!updated) return res.status(404).json({ message: "invoice not found", success: false });
-//         res.status(200).json({ updated, message: "Updated successfully", success: true });
-//     }
-//     catch (err) {
-//         res.status(500).json({ message: "Error updating Invoice", error: err.message });
-//     }
-// };
-
-
-
 
 export const updateInvoice = async (req, res) => {
     try {
@@ -176,8 +126,11 @@ export const updateInvoice = async (req, res) => {
         }
 
         const today = new Date();
-        const currentYear = today.getFullYear();
-        const firstApril = new Date(currentYear, 2, 1);
+        const year = today.getMonth() < 3
+            ? today.getFullYear() - 1
+            : today.getFullYear();
+
+        const firstApril = new Date(year, 3, 1);
 
         // 🔥 If converting DRAFT → FINAL
         if (status === "FINAL" && old.status === "DRAFT") {
@@ -240,8 +193,11 @@ export const updateInvoice = async (req, res) => {
 export const getAllDraft = async (req, res) => {
     try {
         const today = new Date();
-        const currentYear = today.getFullYear();
-        const firstApril = new Date(currentYear, 2, 1);
+        const year = today.getMonth() < 3
+            ? today.getFullYear() - 1
+            : today.getFullYear();
+
+        const firstApril = new Date(year, 3, 1);
 
         const drafts = await invoice.find({ status: "DRAFT", createdAt: { $gte: firstApril } });
         if (!drafts) return res.status(404).json({ message: "No drafts found", success: false });
@@ -288,14 +244,14 @@ export const printInvoice = async (req, res) => {
     try {
 
         const { startDate, endDate } = req.body;
-        if ((!startDate || !endDate)&&(startDate<=endDate)) return res.status(400).json({ message: "All Field are reequired", success: false });
+        if ((!startDate || !endDate)&&(startDate<=endDate)) return res.status(400).json({ message: "All Field are required", success: false });
 
         const start = new Date(startDate);
         start.setHours(0, 0, 0, 0);
         const end = new Date(endDate);
         end.setHours(23, 59, 59, 999);
 
-        const inv =await invoice.find({status:"FINAL",date:{$gte:start,$lte:end}});
+        const inv =await invoice.find({status:"FINAL",invoiceDate:{$gte:start,$lte:end}});
 
         if(!inv) return res.status(404).json({message:"No invoice found",success:false});
 

@@ -958,3 +958,32 @@ input.short {
 .form-group2{
   width: 100%;
 }
+
+
+.flex2 {
+  display: flex;
+  gap: 16px;
+  align-items: flex-end;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.width100{
+  width: 100%;
+}
+.trans-form.width100 input[type="date"] {
+  height: 42px;
+  padding: 8px 12px;
+}
+
+.filter-btn {
+  height: 42px;
+  padding: 0 20px;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s ease;
+}
+
