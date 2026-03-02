@@ -1,16 +1,64 @@
-import { schemeModel } from "../models/bikeSpecifications.js"
+import { schemeModel } from "../models/bikeSpecifications.js";
+
+const normalizeDateRange = (fromDate, toDate) => {
+    const from = new Date(fromDate);
+    from.setHours(0, 0, 0, 0);
+
+    const to = new Date(toDate);
+    to.setHours(23, 59, 59, 999);
+
+    return { from, to };
+};
 
 export const addScheme = async (req, res) => {
     try {
         const { scheme, fromDate, toDate, toBike, value } = req.body;
-        if (!scheme || !fromDate || !toDate || !toBike || !value) return res.status(400).json({ message: "All fields are required", success: false });
-        const exist = await schemeModel.findOne({ scheme, fromDate, toDate, toBike });
-        if (exist) return res.status(400).json({ message: "scheme already exist for this bike", success: false });
-        let created = await schemeModel.create({ scheme, fromDate, toBike, toDate, value });
+
+        if (!scheme || !fromDate || !toDate || !toBike || !value) {
+            return res.status(400).json({
+                message: "All fields are required",
+                success: false
+            });
+        }
+
+        const { from, to } = normalizeDateRange(fromDate, toDate);
+
+        const exist = await schemeModel.findOne({
+            scheme,
+            fromDate: from,
+            toDate: to,
+            toBike
+        });
+
+        if (exist) {
+            return res.status(400).json({
+                message: "scheme already exist for this bike",
+                success: false
+            });
+        }
+
+        let created = await schemeModel.create({
+            scheme,
+            fromDate: from,
+            toDate: to,
+            toBike,
+            value
+        });
+
         created = await schemeModel.findById(created._id).populate("toBike");
-        res.status(200).json({ created, message: "Created successfully", success: true });
+
+        res.status(200).json({
+            created,
+            message: "Created successfully",
+            success: true
+        });
+
     } catch (err) {
-        res.status(500).json({ message: "Error adding scheme", success: false, error: err.message });
+        res.status(500).json({
+            message: "Error adding scheme",
+            success: false,
+            error: err.message
+        });
     }
 };
 
@@ -36,18 +84,41 @@ export const getAllScheme = async (req, res) => {
 
 export const updateScheme = async (req, res) => {
     try {
-        let updated = await schemeModel.findByIdAndUpdate(req.params.id, req.body, {
-            new: true,
-            runValidators: true
-        });
-        if (!updated) return res.status(404).json({ message: "scheme not found", success: false });
+        const { fromDate, toDate } = req.body;
+
+        if (fromDate && toDate) {
+            const { from, to } = normalizeDateRange(fromDate, toDate);
+            req.body.fromDate = from;
+            req.body.toDate = to;
+        }
+
+        let updated = await schemeModel.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            { new: true, runValidators: true }
+        );
+
+        if (!updated) {
+            return res.status(404).json({
+                message: "scheme not found",
+                success: false
+            });
+        }
 
         updated = await schemeModel.findById(updated._id).populate("toBike");
 
-        res.status(200).json({ message: "updated successfully", updated, success: true });
-    } catch (err) {
-        res.status(500).json({ message: "Error updating scheme", success: false, error: err.message });
+        res.status(200).json({
+            message: "updated successfully",
+            updated,
+            success: true
+        });
 
+    } catch (err) {
+        res.status(500).json({
+            message: "Error updating scheme",
+            success: false,
+            error: err.message
+        });
     }
 };
 

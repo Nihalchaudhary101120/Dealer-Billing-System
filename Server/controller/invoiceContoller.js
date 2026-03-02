@@ -2,12 +2,47 @@ import invoice from "../models/invoice.js";
 
 export const addInvoice = async (req, res) => {
     try {
-        const { status, customerName, customerFatherName, customerAddress, customerDistrict, customerState, customerPhone, customerGstNumber, billType, isHp, financeCompany, bike, chassisNumber, engineNumber, discount, taxableAmount, scheme, cgst, sgst, totalAmount, dealer } = req.body;
+        let {
+            status,
+            customerName,
+            customerFatherName,
+            customerAddress,
+            customerDistrict,
+            customerState,
+            customerPhone,
+            customerGstNumber,
+            billType,
+            isHp,
+            financeCompany,
+            bike,
+            chassisNumber,
+            engineNumber,
+            discount,
+            taxableAmount,
+            scheme,
+            cgst,
+            sgst,
+            totalAmount,
+            dealer
+        } = req.body;
 
-        if (!status || !customerName || !customerFatherName || !customerAddress || !customerDistrict || !customerState || !customerPhone || !billType || !bike || !chassisNumber || !engineNumber || !taxableAmount || !cgst || !sgst || !totalAmount || !dealer) return res.status(400).json({ message: "Fill all the fields", success: false });
+        // convert empty financeCompany string to null so mongoose cast succeeds
+        if (financeCompany === "") financeCompany = null;
 
-        const exist = await invoice.findOne({ invoiceNumber, invoiceDate });
-        if (exist) return res.status(400).json({ message: "invoice record already exist", success: false });
+        // simple required‑field check; avoid coercing 0 or '' to false where appropriate
+        if (!status || !customerName || !customerFatherName || !customerDistrict || !customerState || !customerPhone || !billType || !bike || !chassisNumber || !engineNumber || taxableAmount == null || cgst == null || sgst == null || totalAmount == null || !dealer) {
+            return res.status(400).json({ message: "Fill all the required fields", success: false });
+        }
+
+        // don't try to find by undefined invoiceNumber/date – instead check for duplicate chassis/engine
+        const existingChassis = await invoice.findOne({ chassisNumber });
+        if (existingChassis) {
+            return res.status(400).json({ message: "Chassis number already used", success: false });
+        }
+        const existingEngine = await invoice.findOne({ engineNumber });
+        if (existingEngine) {
+            return res.status(400).json({ message: "Engine number already used", success: false });
+        }
 
         const today = new Date();
         const currentYear = today.getFullYear();
@@ -33,7 +68,8 @@ export const addInvoice = async (req, res) => {
         res.status(200).json({ created, message: "Invoice created successfully", success: true });
 
     } catch (err) {
-        res.status(500).json({ message: "Error creating invoice ", error: err.message, success: false });
+        console.error("addInvoice error", err);
+        return res.status(500).json({ message: "Error creating invoice", error: err.message || err, success: false });
     }
 };
 
@@ -185,8 +221,9 @@ export const updateInvoice = async (req, res) => {
         old.createdBy = createdBy;
         old.lockedAt = lockedAt;
 
+        // ensure financeCompany is null if blank on updates as well
+        if (financeCompany === "") old.financeCompany = null;
         const updated = await old.save();
-
         return res.status(200).json({
             updated,
             message: "Inoice Updated successfully",

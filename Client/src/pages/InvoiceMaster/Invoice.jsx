@@ -4,6 +4,7 @@ import { useBank } from "../../context/BankContext";
 import { useBike } from "../../context/BikeContext";
 import { useDealer } from "../../context/DealerContext";
 import "./invoice.css";
+import api from "../../api/api";
 
 const Invoice = () => {
   const { showToast } = useToast();
@@ -16,7 +17,9 @@ const Invoice = () => {
     model: "",
     color: "",
     variant: ""
-  })
+  });
+
+  const [loading, setLoading] = useState(false);
 
   const [newInvoice, setNewInvoice] = useState({
     status: "DRAFT",
@@ -27,7 +30,7 @@ const Invoice = () => {
     customerState: "",
     customerPhone: "",
     customerGstNumber: "",
-    billType: "CASH",
+    billType: "Cash",
     isHp: false,
     financeCompany: "",
     bike: "",
@@ -52,16 +55,40 @@ const Invoice = () => {
   const basePrice = Number(matchedBike?.basePrice || "");
   const disc = Number(newInvoice?.discount || "");
 
-
-
   const taxableAmt = useMemo(() => {
-    return (basePrice * quantity - disc);
+    console.log("taxable", (basePrice * quantity - disc * quantity));
+    return (basePrice * quantity - disc * quantity);
   }, [basePrice, disc]);
 
+  const sgst = Number(newInvoice?.sgst ?? "");
+  const cgst = Number(newInvoice?.cgst ?? "");
+
+  const sgstAmt = useMemo(() => {
+    console.log("SGST", parseFloat((taxableAmt * (sgst / 100))).toFixed(2))
+    return (taxableAmt * (Number(sgst) / 100));
+  }, [sgst, taxableAmt]);
+
+  const cgstAmt = useMemo(() => {
+    console.log("CGST", parseFloat((taxableAmt * (cgst / 100))).toFixed(2))
+    return (taxableAmt * (Number(cgst) / 100));
+  }, [cgst, taxableAmt]);
+
+  const matchScheme = Array.isArray(schemes) ? schemes.find((sm) =>
+    String(sm._id || "") === String(newInvoice.scheme)) : {};
+
+  useEffect(() => {
+    if (matchScheme && typeof matchScheme.value !== 'undefined') {
+      setNewInvoice(prev => ({ ...prev, discount: matchScheme.value || 0 }));
+    }
+  }, [matchScheme]);
+
+  console.log("matched scheme", matchScheme);
+
+  const finalAmt = useMemo(() => {
+    return (taxableAmt + sgstAmt + cgstAmt);
+  }, [taxableAmt, sgst, cgst]);
 
   const today = new Date();
-  // build list of applicable schemes (filter returns an array; default to
-  // empty array if `schemes` isn't ready)
   const applicableSchemes = Array.isArray(schemes)
     ? schemes.filter((s) =>
       String(s.toBike?._id || s.toBike) === String(newBike.model || "") &&
@@ -70,22 +97,65 @@ const Invoice = () => {
     )
     : [];
 
-  // keep isHp in sync with billType without updating state during rendering
   useEffect(() => {
     setNewInvoice((prev) => ({
       ...prev,
       isHp: prev.billType === "Credit",
+      totalAmount: finalAmt.toFixed(2),
+      taxableAmount: taxableAmt,
+      bike: matchedBike?._id,
+      discount: matchScheme?.value,
     }));
-  }, [newInvoice.billType]);
-
-  const matchScheme = Array.isArray(schemes) ? schemes.find((sm) =>
-    String(sm._id || "") === String(newInvoice.scheme)) : {};
+  }, [newInvoice.billType, taxableAmt, finalAmt, matchedBike]);
 
 
 
-  const matchingBike = Array.isArray(bikes)
-    ? bikes.find((b) => String(b._id) === String(newInvoice.bike))
-    : null;
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      setLoading(true);
+      console.log("newInvoice", newInvoice);
+      const res = await api.post("/invoice/", newInvoice);
+      console.log("invoice", res.data);
+      if (res.data?.success) {
+        showToast(res.data.message, "success");
+
+        setNewInvoice({
+          status: "DRAFT",
+          customerName: "",
+          customerFatherName: "",
+          customerAddress: "",
+          customerDistrict: "",
+          customerState: "",
+          customerPhone: "",
+          customerGstNumber: "",
+          billType: "Cash",
+          isHp: false,
+          financeCompany: "",
+          bike: "",
+          chassisNumber: "",
+          engineNumber: "",
+          discount: 0,
+          scheme: "",
+          taxableAmount: "",
+          cgst: 9,
+          sgst: 9,
+          totalAmount: "",
+          dealer: "",
+        })
+      } else {
+        showToast(res.data?.message, "error");
+      }
+
+    } catch (err) {
+      // log full response body so you can see server message
+      console.error("invoice submit failed", err?.response?.data || err?.message || err);
+      showToast(err?.response?.data?.message || "Error in invoice", "error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
 
   return (
     <div className="trans">
@@ -165,8 +235,21 @@ const Invoice = () => {
                 </select>
               </div>
 
-
-
+              <div className="form-group">
+                <label>Bill Type</label>
+                <select
+                  value={newInvoice.billType}
+                  onChange={(e) =>
+                    setNewInvoice({
+                      ...newInvoice,
+                      billType: e.target.value,
+                    })
+                  }
+                >
+                  <option value="Cash">Cash</option>
+                  <option value="Credit">Credit</option>
+                </select>
+              </div>
               <div className="form-group">
                 <label>Status</label>
                 <select
@@ -218,39 +301,51 @@ const Invoice = () => {
                   />
                 </div>
                 {/* ===== MAIN INPUTS ===== */}
-                <div className="item-inputs">
-                  <div className="flex">
-                    <div className="form-group">
-                      <label>Customer State</label>
-                      <input
-                        type="text"
-                        value={newInvoice.customerState}
-                        onChange={(e) =>
-                          setNewInvoice({
-                            ...newInvoice,
-                            customerState: e.target.value,
-                          })
-                        }
-                      />
-                    </div>
+                <div className="form-group">
+                  <label>Customer State</label>
+                  <input
+                    type="text"
+                    value={newInvoice.customerState}
+                    onChange={(e) =>
+                      setNewInvoice({
+                        ...newInvoice,
+                        customerState: e.target.value,
+                      })
+                    }
+                  />
+                </div>
 
 
 
-                    <div className="form-group">
-                      <label>Customer District</label>
-                      <input
-                        type="text"
-                        value={newInvoice.customerDistrict}
-                        onChange={(e) =>
-                          setNewInvoice({
-                            ...newInvoice,
-                            customerDistrict: e.target.value,
-                          })
-                        }
-                      />
-                    </div>
+                <div className="form-group">
+                  <label>Customer District</label>
+                  <input
+                    type="text"
+                    value={newInvoice.customerDistrict}
+                    onChange={(e) =>
+                      setNewInvoice({
+                        ...newInvoice,
+                        customerDistrict: e.target.value,
+                      })
+                    }
+                  />
+                </div>
 
-                  </div>
+              </div>
+
+              <div className="flex">
+                <div className="form-group form-group2">
+                  <label>Customer Address</label>
+                  <input
+                    type="text"
+                    value={newInvoice.customerAddress}
+                    onChange={(e) =>
+                      setNewInvoice({
+                        ...newInvoice,
+                        customerAddress: e.target.value,
+                      })
+                    }
+                  />
                 </div>
               </div>
 
@@ -290,7 +385,6 @@ const Invoice = () => {
                     <label>Scheme</label>
                     <select
                       value={newInvoice.scheme}
-                      // disabled={newInvoice.billType === "CASH"}
                       onChange={(e) =>
                         setNewInvoice({
                           ...newInvoice,
@@ -352,14 +446,10 @@ const Invoice = () => {
                 <div className="form-group">
                   <label>Discount</label>
                   <input
+                    readOnly
                     type="number"
-                    value={matchScheme?.value ?? 0}
-                    onChange={(e) =>
-                      setNewInvoice({
-                        ...newInvoice,
-                        discount: matchScheme.value || 0,
-                      })
-                    }
+                    value={newInvoice?.discount ?? ""}
+
                   />
                 </div>
               </div>
@@ -400,7 +490,7 @@ const Invoice = () => {
                 <label>Finance Company</label>
                 <select
                   value={newInvoice.financeCompany}
-                  disabled={newInvoice.billType === "CASH"}
+                  disabled={newInvoice.billType === "Cash"}
                   onChange={(e) =>
                     setNewInvoice({
                       ...newInvoice,
@@ -422,10 +512,15 @@ const Invoice = () => {
               <div className="form-group">
                 <label>QTY</label>
                 <input
+                  readOnly
                   type="number"
                   value={quantity}
                   onChange={(e) => setQuantity(Number(e.target.value))}
                 />
+              </div>
+
+              <div className="form-group">
+                <button type="submit" onClick={handleSubmit} style={{ backgroundColor: "red", margin: "3vh 0 0 0" }}>Submit</button>
               </div>
 
               <div className="form-group">
@@ -436,41 +531,9 @@ const Invoice = () => {
                   readOnly
                 />
               </div>
-
-              <div className="form-group">
-                <label>Bill Type</label>
-                <select
-                  value={newInvoice.billType}
-                  onChange={(e) =>
-                    setNewInvoice({
-                      ...newInvoice,
-                      billType: e.target.value,
-                    })
-                  }
-                >
-                  <option value="Cash">Cash</option>
-                  <option value="Credit">Credit</option>
-                </select>
-              </div>
-
-
             </div>
 
-            <div className="flex">
-              <div className="form-group">
-                <label>Customer Address</label>
-                <input
-                  type="text"
-                  value={newInvoice.customerAddress}
-                  onChange={(e) =>
-                    setNewInvoice({
-                      ...newInvoice,
-                      customerAddress: e.target.value,
-                    })
-                  }
-                />
-              </div>
-            </div>
+
 
 
 
