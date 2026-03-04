@@ -200,7 +200,7 @@
 }
 .all-row11 {
   display: grid;
-  grid-template-columns: 2fr 2fr 2fr 1.5fr 1.5fr 1fr ;
+  grid-template-columns: 0.5fr 2fr 2fr 2fr 1.5fr 1.5fr 1fr ;
   align-items: center;
   padding: 10px 21px;
   border-bottom: 1px solid #e0e0e0;
@@ -409,7 +409,7 @@
   height: 10vh;
   margin-bottom: 16px;
   display: grid;
-  grid-template-columns: 2fr 2fr 1.5fr 1.5fr 1fr 1.5fr ;
+  grid-template-columns:0.8fr 2fr 2fr 1.5fr 1.5fr 1fr 1.5fr ;
   align-items: center;
   justify-content: center;
   text-align: center;
@@ -419,6 +419,29 @@
   text-wrap: nowrap;
 }
 
+
+.headerr1 {
+  background-color: #f0f3f9;
+  font-weight: bold;
+  border-bottom: 2px solid #d0d0d0;
+  gap: 10px;
+  height: 10vh;
+  margin-bottom: 16px;
+  display: grid;
+  grid-template-columns: 2fr 2fr 1.5fr 1.5fr 1fr 1.5fr ;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  /* padding: 10px 21px; */
+  /* border-bottom: 1px solid #e0e0e0; */
+  /* font-size: 14px; */
+  text-wrap: nowrap;
+}
+.excel{
+    display:flex;
+    flex-direction:row !important;
+    gap:10px;
+}
 
 .actions span {
   cursor: pointer;
@@ -980,6 +1003,18 @@ input.short {
   height: 42px;
   padding: 0 20px;
   color: white;
+  background:#007bff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s ease;
+}
+
+.filter-btn1 {
+  height: 42px;
+  padding: 0 20px;
+  background: #1e8e3e;
   border: none;
   border-radius: 6px;
   cursor: pointer;

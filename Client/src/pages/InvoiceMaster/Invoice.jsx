@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useToast } from "../../context/ToastContext";
 import { useBank } from "../../context/BankContext";
 import { useBike } from "../../context/BikeContext";
@@ -127,6 +127,7 @@ const Invoice = () => {
 
         if (res.data?.success) {
           setNewInvoice(res.data?.draftInvoice);
+        console.log("the draft is ",res.data?.draftInvoice);
           setNewBike({
             model: res.data?.draftInvoice?.bike?.modelName?._id || "",
             color: res.data?.draftInvoice?.bike?.colorOptions?._id || "",
@@ -140,7 +141,7 @@ const Invoice = () => {
     };
 
     fetchDraft();
-  }, [id]);
+  }, [id,dealers]);
 
 
   const handleSubmit = async (e) => {
@@ -204,6 +205,98 @@ const Invoice = () => {
     }
   };
 
+  const customerNameRef = useRef(null);
+  const customerFatherNameRef = useRef(null);
+  const customerStateRef = useRef(null);
+  const customerAddressRef = useRef(null);
+  const customerDistrictRef = useRef(null);
+  const customerPhoneRef = useRef(null);
+  const customerGstRef = useRef(null);
+  const customerCgstRef = useRef(null);
+  const customerSgstRef = useRef(null);
+  const customerChassisRef = useRef(null);
+  const customerEngineRef = useRef(null);
+  const submitRef = useRef(null);
+
+  const handleKeyNav = (e, currentField) => {
+    if (["ArrowRight", "ArrowDown", "Enter"].includes(e.key)) {
+      e.preventDefault();
+      if (e.key === "Enter" && currentField === "submit") {
+        submitRef.current?.click();
+        return;
+      }
+
+      switch (currentField) {
+        case "customerName":
+          customerFatherNameRef.current?.focus();
+          break;
+        case "fathername":
+          customerStateRef.current?.focus();
+          break;
+        case "state":
+          customerDistrictRef.current?.focus();
+          break;
+        case "district":
+          customerAddressRef.current?.focus();
+          break;
+        case "address":
+          customerPhoneRef.current?.focus();
+          break;
+        case "phone":
+          customerGstRef.current?.focus();
+          break;
+        case "customerGst":
+          customerChassisRef.current?.focus();
+          break;
+        case "chassis":
+          customerEngineRef.current?.focus();
+          break;
+        case "engine":
+          if (e.key === "Enter") submitRef.current?.click();
+          else submitRef.current?.focus();
+          break;
+        case "submit":
+          if (e.key === "Enter") submitRef.current?.click();
+          break;
+        default:
+          break;
+      }
+    } else if (["ArrowUp", "ArrowLeft"].includes(e.key)) {
+      e.preventDefault();
+      switch (currentField) {
+        case "fathername":
+          customerNameRef.current?.focus();
+          break;
+        case "state":
+          customerFatherNameRef.current?.focus();
+          break;
+        case "district":
+          customerStateRef.current?.focus();
+          break;
+        case "address":
+          customerDistrictRef.current?.focus();
+          break;
+        case "phone":
+          customerAddressRef.current?.focus();
+          break;
+        case "customerGst":
+          customerPhoneRef.current?.focus();
+          break;
+        case "chassis":
+          customerGstRef.current?.focus();
+          break;
+        case "engine":
+          customerChassisRef.current?.focus();
+          break;
+        case "submit":
+          customerEngineRef.current?.focus();
+          break;
+        default: break;
+      }
+    }
+  }
+
+
 
   return (
     <div className="trans">
@@ -215,7 +308,7 @@ const Invoice = () => {
             <div className="salesman-detail">
 
               <div className="form-group">
-                <label>Dealer</label>
+                <label>Dealer*</label>
                 <select
                   value={newInvoice.dealer}
                   onChange={(e) =>
@@ -233,7 +326,7 @@ const Invoice = () => {
 
 
               <div className="form-group">
-                <label>Select Model</label>
+                <label>Select Model*</label>
                 <select
                   value={newBike.model}
                   onChange={(e) =>
@@ -250,7 +343,7 @@ const Invoice = () => {
               </div>
 
               <div className="form-group">
-                <label>Select Variant</label>
+                <label>Select Variant*</label>
                 <select
                   value={newBike.variant}
                   onChange={(e) =>
@@ -267,7 +360,7 @@ const Invoice = () => {
               </div>
 
               <div className="form-group">
-                <label>Select Color</label>
+                <label>Select Color*</label>
                 <select
                   value={newBike.color}
                   onChange={(e) =>
@@ -284,7 +377,7 @@ const Invoice = () => {
               </div>
 
               <div className="form-group">
-                <label>Bill Type</label>
+                <label>Bill Type* </label>
                 <select
                   value={newInvoice.billType}
                   onChange={(e) =>
@@ -299,7 +392,7 @@ const Invoice = () => {
                 </select>
               </div>
               <div className="form-group">
-                <label>Status</label>
+                <label>Status*</label>
                 <select
                   value={newInvoice.status}
                   onChange={(e) =>
@@ -324,6 +417,7 @@ const Invoice = () => {
                 <div className="form-group">
                   <label>Customer Name*</label>
                   <input
+                    ref={customerNameRef}
                     type="text"
                     value={newInvoice.customerName}
                     onChange={(e) =>
@@ -332,12 +426,14 @@ const Invoice = () => {
                         customerName: e.target.value,
                       })
                     }
+                    onKeyDown={(e) => handleKeyNav(e, "customerName")}
                   />
                 </div>
 
                 <div className="form-group">
-                  <label>S/W/D</label>
+                  <label>S/W/D*</label>
                   <input
+                    ref={customerFatherNameRef}
                     type="text"
                     value={newInvoice.customerFatherName}
                     onChange={(e) =>
@@ -346,12 +442,14 @@ const Invoice = () => {
                         customerFatherName: e.target.value,
                       })
                     }
+                    onKeyDown={(e) => handleKeyNav(e, "fathername")}
                   />
                 </div>
                 {/* ===== MAIN INPUTS ===== */}
                 <div className="form-group">
-                  <label>Customer State</label>
+                  <label>Customer State*</label>
                   <input
+                    ref={customerStateRef}
                     type="text"
                     value={newInvoice.customerState}
                     onChange={(e) =>
@@ -360,14 +458,16 @@ const Invoice = () => {
                         customerState: e.target.value,
                       })
                     }
+                    onKeyDown={(e) => handleKeyNav(e, "state")}
                   />
                 </div>
 
 
 
                 <div className="form-group">
-                  <label>Customer District</label>
+                  <label>Customer District*</label>
                   <input
+                    ref={customerDistrictRef}
                     type="text"
                     value={newInvoice.customerDistrict}
                     onChange={(e) =>
@@ -376,6 +476,7 @@ const Invoice = () => {
                         customerDistrict: e.target.value,
                       })
                     }
+                    onKeyDown={(e) => handleKeyNav(e, "district")}
                   />
                 </div>
 
@@ -383,8 +484,9 @@ const Invoice = () => {
 
               <div className="flex">
                 <div className="form-group form-group2">
-                  <label>Customer Address</label>
+                  <label>Customer Address*</label>
                   <input
+                    ref={customerAddressRef}
                     type="text"
                     value={newInvoice.customerAddress}
                     onChange={(e) =>
@@ -393,6 +495,7 @@ const Invoice = () => {
                         customerAddress: e.target.value,
                       })
                     }
+                    onKeyDown={(e) => handleKeyNav(e, "address")}
                   />
                 </div>
               </div>
@@ -400,8 +503,9 @@ const Invoice = () => {
               <div className="item-inputs">
                 <div className="flex">
                   <div className="form-group">
-                    <label>Customer Phone</label>
+                    <label>Customer Phone*</label>
                     <input
+                      ref={customerPhoneRef}
                       type="number"
                       value={newInvoice.customerPhone}
                       onChange={(e) =>
@@ -410,6 +514,7 @@ const Invoice = () => {
                           customerPhone: e.target.value,
                         })
                       }
+                      onKeyDown={(e) => handleKeyNav(e, "phone")}
                     />
                   </div>
 
@@ -418,6 +523,7 @@ const Invoice = () => {
                   <div className="form-group">
                     <label>Customer GST</label>
                     <input
+                      ref={customerGstRef}
                       type="text"
                       value={newInvoice.customerGstNumber}
                       onChange={(e) =>
@@ -426,6 +532,7 @@ const Invoice = () => {
                           customerGstNumber: e.target.value,
                         })
                       }
+                      onKeyDown={(e) => handleKeyNav(e, "customerGst")}
                     />
                   </div>
 
@@ -455,7 +562,7 @@ const Invoice = () => {
             <div className="gap2">
               <div className="flex">
                 <div className="form-group">
-                  <label>SGST %</label>
+                  <label>SGST %*</label>
                   <input
                     type="number"
                     value={newInvoice.sgst}
@@ -469,7 +576,7 @@ const Invoice = () => {
                 </div>
 
                 <div className="form-group">
-                  <label>CGST %</label>
+                  <label>CGST %*</label>
                   <input
                     type="number"
                     value={newInvoice.cgst}
@@ -483,7 +590,7 @@ const Invoice = () => {
                 </div>
 
                 <div className="form-group">
-                  <label>Base Price</label>
+                  <label>Base Price*</label>
                   <input
                     type="number"
                     readOnly
@@ -505,8 +612,9 @@ const Invoice = () => {
 
             <div className="flex">
               <div className="form-group">
-                <label>Chassis Number</label>
+                <label>Chassis Number*</label>
                 <input
+                  ref={customerChassisRef}
                   type="String"
                   value={newInvoice.chassisNumber}
                   onChange={(e) =>
@@ -515,12 +623,14 @@ const Invoice = () => {
                       chassisNumber: e.target.value,
                     })
                   }
+                  onKeyDown={(e) => handleKeyNav(e, "chassis")}
                 />
               </div>
 
               <div className="form-group">
-                <label>Engine Number</label>
+                <label>Engine Number*</label>
                 <input
+                  ref={customerEngineRef}
                   type="String"
                   value={newInvoice.engineNumber}
                   onChange={(e) =>
@@ -529,6 +639,7 @@ const Invoice = () => {
                       engineNumber: e.target.value,
                     })
                   }
+                  onKeyDown={(e) => handleKeyNav(e, "engine")}
                 />
               </div>
 
@@ -568,11 +679,15 @@ const Invoice = () => {
               </div>
 
               <div className="form-group">
-                <button type="submit" onClick={handleSubmit} style={{ backgroundColor: "red", margin: "3vh 0 0 0" }}>{isEditMode ? "Final" : "Submit"}</button>
+                <button type="submit"
+                  ref={submitRef}
+                  onKeyDown={(e) => handleKeyNav(e, "submit")}
+
+                  onClick={handleSubmit} style={{ backgroundColor: "red", margin: "3vh 0 0 0" }}>{isEditMode ? "Final" : "Submit"}</button>
               </div>
 
               <div className="form-group">
-                <label>HSN</label>
+                <label>HSN*</label>
                 <input
                   type="text"
                   value={matchedBike?.hsnCode || ""}
@@ -580,11 +695,6 @@ const Invoice = () => {
                 />
               </div>
             </div>
-
-
-
-
-
 
           </div>
 

@@ -77,7 +77,7 @@ const Draft = () => {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
-          <div className="headerr">
+          <div className="headerr1">
             <div>CUSTOMER NAME</div>
             <div>CUSTOMER FATHERNAME</div>
             <div>MODEL </div>

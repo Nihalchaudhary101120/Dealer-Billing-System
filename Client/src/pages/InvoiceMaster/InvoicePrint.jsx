@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState } from "react";
 import api from "../../api/api";
 import { useDealer } from "../../context/DealerContext";
 import { useBank } from "../../context/BankContext";
+import { useBike } from "../../context/BikeContext";
 
 const InvoicePrint = ({ invoiceId, onClose }) => {
   const printRef = useRef();
@@ -9,9 +10,12 @@ const InvoicePrint = ({ invoiceId, onClose }) => {
   const [loading, setLoading] = useState(true);
   const { dealers } = useDealer();
   const { banks } = useBank();
+  const { schemes } =useBike();
 
   const matchDealer = Array.isArray(dealers) ? dealers.find((d) => String(d._id) === String(invoice?.dealer ?? "")) : {};
   const matchFinance = Array.isArray(banks) ? banks.find((d) => String(d._id) === String(invoice?.financeCompany ?? "")) : {};
+  const matchScheme =Array.isArray(schemes) ? schemes.find((d)=> String(d._id)===String(invoice?.scheme ?? "")): {};
+
 
   useEffect(() => {
     const fetchInvoice = async () => {
@@ -217,7 +221,7 @@ const InvoicePrint = ({ invoiceId, onClose }) => {
                     <strong>{invoice.customerName}</strong><br />
                     S/W/D: {invoice.customerFatherName}<br />
                     {invoice.customerAddress}<br />
-                    {invoice.customerDistrict}{invoice.customerState ? ", " + invoice.customerState : ""}<br />
+                    {invoice.customerDistrict}<br/>{invoice.customerState ? "" + invoice.customerState : ""}<br />
                     {invoice.customerPhone ? "Mob: " + invoice.customerPhone : ""}<br />
                     {invoice.customerGstNumber ? "GST: " + invoice.customerGstNumber : ""}
                     <br />Bill Type: <strong>{invoice.billType}</strong>
@@ -337,13 +341,19 @@ const InvoicePrint = ({ invoiceId, onClose }) => {
               </p>
               <p style={printStyles.partyText}>
                 Received: <br />
-                  <span>1. Tools:     (y/n)</span><br />
-                  <span>2. ManualBook-E:     (y/n)</span>
+                  <span>1. Tools:     (Y/N)</span><br />
+                  <span>2. ManualBook-E:     (Y/N)</span><br/>
+                  <span>3. Duplicate Keys:            (Y/N)</span>
+              </p>
+              <p style={printStyles.partyText}>
+                { invoice.scheme && (
+                  <><br />Scheme : <strong>{matchScheme?.scheme|| ""}</strong></>
+                )}
               </p>
 
 
               {/* Spacer — fills remaining space so note/signature sit at bottom */}
-              <div className="spacer" style={{ flex: 1, minHeight: "8px" }} />
+              <div className="spacer" style={{ flex: 0.3, minHeight: "3px" }} />
 
               {/* Note */}
               <div className="footer-note" style={printStyles.note}>
@@ -353,9 +363,8 @@ const InvoicePrint = ({ invoiceId, onClose }) => {
 
               {/* Signature */}
               <div className="signature" style={printStyles.signature}>
-                <p>For {dealer.branchName || "Authorised Dealer"}</p>
+                <p>For {matchDealer.branchName || "Authorised Dealer"}</p>
                 <br /><br />
-                <p>____________________________</p>
                 <p style={{ fontSize: "10px", marginTop: "2px" }}>Authorised Signatory</p>
               </div>
 

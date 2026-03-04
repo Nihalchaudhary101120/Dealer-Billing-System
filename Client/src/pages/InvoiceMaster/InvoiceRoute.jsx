@@ -14,6 +14,7 @@ const InvoiceMaster = () => {
                         <li><NavLink to={`/invoice/all-invoice`} className={({ isActive }) => (isActive ? 'active' : '')}>All Invoice</NavLink></li>
                         <li><NavLink to={`/invoice/draft`} className={({ isActive }) => (isActive ? 'active' : '')}>Draft</NavLink></li>
                         <li><NavLink to={`/invoice/create`} className={({ isActive }) => (isActive ? 'active' : '')}>Create Invoice</NavLink></li>
+                      
                     </ul>
                 </div>
 

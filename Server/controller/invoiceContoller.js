@@ -211,7 +211,7 @@ export const getInvoiceById = async (req, res) => {
     try {
         const { id } = req.params;
         if (!id) return res.status(400).json({ message: "No invoice found", success: false });
-        const draftInvoice = await invoice.findById(id).populate({
+        const draftInvoice = await invoice.findByIdAndUpdate(id).populate({
             path: "bike",
             populate: [
                 { path: "modelName" },
@@ -219,6 +219,10 @@ export const getInvoiceById = async (req, res) => {
                 { path: "colorOptions" }
             ]
         });
+        if (draftInvoice.status === "DRAFT") {
+            draftInvoice.status = "FINAL";
+            await draftInvoice.save();
+        }
 
         if (!draftInvoice) return res.status(404).json({ message: "No invoice found", success: false });
         res.status(200).json({ message: " Drafted Invoice fetched successfully", draftInvoice, success: true });
@@ -244,21 +248,21 @@ export const printInvoice = async (req, res) => {
     try {
 
         const { startDate, endDate } = req.body;
-        if ((!startDate || !endDate)&&(startDate<=endDate)) return res.status(400).json({ message: "All Field are required", success: false });
+        if ((!startDate || !endDate) && (startDate <= endDate)) return res.status(400).json({ message: "All Field are required", success: false });
 
         const start = new Date(startDate);
         start.setHours(0, 0, 0, 0);
         const end = new Date(endDate);
         end.setHours(23, 59, 59, 999);
 
-        const inv =await invoice.find({status:"FINAL",invoiceDate:{$gte:start,$lte:end}});
+        const inv = await invoice.find({ status: "FINAL", invoiceDate: { $gte: start, $lte: end } });
 
-        if(!inv) return res.status(404).json({message:"No invoice found",success:false});
+        if (!inv) return res.status(404).json({ message: "No invoice found", success: false });
 
-        res.status(200).json({message:"invoice fetched successfully",inv,success:true});
+        res.status(200).json({ message: "invoice fetched successfully", inv, success: true });
 
     }
     catch (err) {
-        res.status(500).json({message:"Error fetching Invoice",error:err.message});
+        res.status(500).json({ message: "Error fetching Invoice", error: err.message });
     }
 };
