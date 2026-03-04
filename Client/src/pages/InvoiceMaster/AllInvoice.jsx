@@ -80,7 +80,7 @@ const AllInvoice = () => {
       { key: "date", width: 15 },
       { key: "customerName", width: 40 },
       { key: "gst", width: 30 },
-      { key: "bikeModel", width: 30 },
+      { key: "bikeModel", width: 45 },
       { key: "hsn", width: 13 },
       { key: "quan", width: 11 },
       { key: "unit", width: 8 },
@@ -91,7 +91,7 @@ const AllInvoice = () => {
       { key: "sgst", width: 17 },
       { key: "totalAmount", width: 18 },
       { key: "bill", width: 18 },
-      { key: "bank", width: 40 },
+      { key: "bank", width: 50 },
     ];
 
     // ── Reusable style helpers ───────────────────────────────────────────────
