@@ -182,7 +182,7 @@ const BikeScheme = () => {
         const Month = String(date.getMonth() + 1).padStart(2, "0");
         const Year = date.getFullYear();
         return `${day}-${Month}-${Year}`
-    }
+    };
 
     const filteredSchemes = useMemo(() => {
         return schemes.filter(s =>

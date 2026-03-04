@@ -19,7 +19,7 @@ const AllInvoice = () => {
     endDate: ""
   });
   const { banks } = useBike();
-  const { bikes , models} = useBike();
+  const { bikes, models } = useBike();
 
   const [loading, setLoading] = useState(false);
 
@@ -61,68 +61,132 @@ const AllInvoice = () => {
   );
 
 
+  const FormatDate = (isodate) => {
+    if (!isodate) return ""
+    const date = new Date(isodate);
+    const day = String(date.getDate()).padStart(2, "0");
+    const Month = String(date.getMonth() + 1).padStart(2, "0");
+    const Year = date.getFullYear();
+    return `${day}-${Month}-${Year}`
+  };
 
   const excelExportInvoices = async () => {
     const workbook = new ExcelJS.Workbook();
-    const workSheet = workbook.addWorksheet("Invoices");
+    const workSheet = workbook.addWorksheet("SALE");
 
     workSheet.columns = [
-      { header: "Sr No.", key: "serial", width: 15 },
-      { header: "Invoice No", key: "invoiceNumber", width: 15 },
-      { header: "Invoice Date", key: "date", width: 20 },
-      { header: "Customer Name", key: "customerName", width: 25 },
-      { header: "Gst No.", key: "gst", width: 25 },
-      { header: "Bike Model", key: "bikeModel", width: 20 },
-      { header: "Hsn Code", key: "hsn", width: 15 },
-      { header: "Quantity", key: "quan", width: 10 },
-      { header: "Unit", key: "unit", width: 10 },
-      { header: "Rate Of Tax", key: "rate", width: 15 },
-      { header: "Amount", key: "amt", width: 15 },
-      { header: "Taxable Amount", key: "taxableAmount", width: 18 },
-      { header: "Cgst Output", key: "cgst", width: 15 },
-      { header: "Sgst Output", key: "sgst", width: 15 },
-      { header: "Total Amount", key: "totalAmount", width: 18 },
-      { header: "Bill-Type", key: "bill", width: 18 },
-      { header: "Finance By", key: "bank", width: 18 }
+      { key: "serial", width: 8 },
+      { key: "invoiceNumber", width: 15 },
+      { key: "date", width: 15 },
+      { key: "customerName", width: 40 },
+      { key: "gst", width: 30 },
+      { key: "bikeModel", width: 30 },
+      { key: "hsn", width: 13 },
+      { key: "quan", width: 11 },
+      { key: "unit", width: 8 },
+      { key: "rate", width: 15 },
+      { key: "amt", width: 18 },
+      { key: "taxableAmount", width: 17 },
+      { key: "cgst", width: 15 },
+      { key: "sgst", width: 17 },
+      { key: "totalAmount", width: 18 },
+      { key: "bill", width: 18 },
+      { key: "bank", width: 40 },
     ];
 
+    // ── Reusable style helpers ───────────────────────────────────────────────
+    const thinBorder = {
+      top: { style: "thin" },
+      left: { style: "thin" },
+      bottom: { style: "thin" },
+      right: { style: "thin" },
+    };
+
+    // ── Row 1 : Title ────────────────────────────────────────────────────────
+    workSheet.mergeCells("A1:Q1");
+    const titleCell = workSheet.getCell("A1");
+    titleCell.value = "DETAILS OF SALE";
+    titleCell.font = { name: "Algerian", size: 36, bold: true };
+    titleCell.alignment = { vertical: "middle", horizontal: "center" };
+    titleCell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FFFFFF00" } };
+    titleCell.border = thinBorder;
+    workSheet.getRow(1).height = 54;
+
+    // ── Rows 2-3 : Spacers (matching sample heights) ─────────────────────────
+    workSheet.getRow(2).height = 0.6;
+    workSheet.getRow(3).height = 3.75;
+
+    // ── Row 4 : Column Headers ───────────────────────────────────────────────
+    const HEADERS = [
+      "Sr No.",
+      "Invoice No",
+      "Invoice Date",
+      "Customer Name",
+      "Gst No.",
+      "Bike Model",
+      "Hsn Code",
+      "Quantity",
+      "Unit",
+      "Rate Of Tax",
+      "Amount",
+      "Taxable Amount",
+      "Cgst Output",
+      "Sgst Output",
+      "Total Amount",
+      "Bill-Type",
+      "Finance By",
+    ];
+
+    const headerRow = workSheet.getRow(4);
+    HEADERS.forEach((label, idx) => {
+      const cell = headerRow.getCell(idx + 1);
+      cell.value = label;
+      cell.font = { name: "Arial", size: 10, bold: true };
+      cell.alignment = { horizontal: "center", vertical: "middle" };
+      cell.border = thinBorder;
+    });
+
+    // ── Data Rows ────────────────────────────────────────────────────────────
+    let sr = 0;
     allInvoice.forEach((inv) => {
-      let sr = 0;
-      const matchFinance = Array.isArray(banks) ? banks.find((d)=>String(d._id)===String(inv?.financeCompany ?? "")):{};
-      const matchBike =Array.isArray(bikes)? bikes.find((d)=> String(d._id)===String(inv?.bike ?? "")):{};
-      const matchModel =Array.isA
+      sr += 1;
 
-
-
-      workSheet.addRow({
-        serial: sr + 1,
+      const row = workSheet.addRow({
+        serial: sr,
         invoiceNumber: inv.invoiceNumber,
-        date: inv.invoiceDate,
+        date: FormatDate(inv.invoiceDate),
         customerName: inv.customerName,
         gst: inv.customerGstNumber || "",
-        bikeMode: inv,
-        hsn: inv,
+        bikeModel: inv?.bike?.modelName?.model || "",
+        hsn: inv?.bike?.hsnCode || "",
         quan: "1",
-        rate: (inv.cgst + inv.sgst || ""),
-        amt: inv,
-        taxableAmount: inv.taxableAmount,
-        cgst: inv.cgst,
-        sgst: inv.sgst,
-        totalAmount: inv.totalAmount,
-        bill: inv.billType,
-        bank: inv
+        unit: "PCS",
+        rate: inv.cgst + inv.sgst || "",
+        amt: inv?.bike?.basePrice || "",
+        taxableAmount: inv?.taxableAmount,
+        cgst: inv?.cgst,
+        sgst: inv?.sgst,
+        totalAmount: inv?.totalAmount,
+        bill: inv?.billType,
+        bank: inv?.financeCompany?.companyName || "",
+      });
+
+      row.height = 15.75;
+      row.font = { name: "Arial", size: 11 };
+
+      row.eachCell({ includeEmpty: true }, (cell) => {
+        cell.border = thinBorder;
+        cell.alignment = { vertical: "middle" };
       });
     });
 
-
+    // ── Export ───────────────────────────────────────────────────────────────
     const buffer = await workbook.xlsx.writeBuffer();
-
     const blob = new Blob([buffer], {
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     });
-
     saveAs(blob, "Invoices.xlsx");
-  }
+  };
 
   return (
     <div className="trans">

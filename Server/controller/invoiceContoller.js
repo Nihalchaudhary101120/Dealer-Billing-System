@@ -211,7 +211,7 @@ export const getInvoiceById = async (req, res) => {
     try {
         const { id } = req.params;
         if (!id) return res.status(400).json({ message: "No invoice found", success: false });
-        const draftInvoice = await invoice.findByIdAndUpdate(id).populate({
+        const draftInvoice = await invoice.findById(id).populate({
             path: "bike",
             populate: [
                 { path: "modelName" },
@@ -219,10 +219,6 @@ export const getInvoiceById = async (req, res) => {
                 { path: "colorOptions" }
             ]
         });
-        if (draftInvoice.status === "DRAFT") {
-            draftInvoice.status = "FINAL";
-            await draftInvoice.save();
-        }
 
         if (!draftInvoice) return res.status(404).json({ message: "No invoice found", success: false });
         res.status(200).json({ message: " Drafted Invoice fetched successfully", draftInvoice, success: true });
@@ -255,7 +251,15 @@ export const printInvoice = async (req, res) => {
         const end = new Date(endDate);
         end.setHours(23, 59, 59, 999);
 
-        const inv = await invoice.find({ status: "FINAL", invoiceDate: { $gte: start, $lte: end } });
+        const inv = await invoice.find({ status: "FINAL", invoiceDate: { $gte: start, $lte: end } }).populate({
+            path: "bike",
+            populate: [
+                { path: "modelName" },
+                { path: "variant" },
+                { path: "colorOptions" }
+            ]
+        })
+            .populate("financeCompany");
 
         if (!inv) return res.status(404).json({ message: "No invoice found", success: false });
 
