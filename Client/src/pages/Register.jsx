@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import {  Link } from 'react-router-dom';
+import {  Link , useNavigate } from 'react-router-dom';
 import{ useAuth } from "../context/AuthContext";
 import {useToast} from "../context/ToastContext";
 import "./registerPage.css"
 
 export default function RegisterPage(){
+    const navigate =useNavigate();
     const {showToast} = useToast();
     const [showPassword , setShowPassword]=useState(false);
     const[name,setName]=useState('');
@@ -68,6 +69,7 @@ export default function RegisterPage(){
             }
             const msg = await verifyOtp({email,otp:code});
             showToast(msg || 'OTP verified successfully!','success');
+            navigate("signin");
         }
         catch(err){
             console.log(err);
