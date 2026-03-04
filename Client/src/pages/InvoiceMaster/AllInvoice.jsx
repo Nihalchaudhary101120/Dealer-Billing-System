@@ -282,9 +282,9 @@ const AllInvoice = () => {
                 <div>{p?.invoiceNumber}</div>
                 <div>{p?.customerName}</div>
                 <div>{p?.customerFatherName}</div>
-                <div>{matchedBike?.modelName?.model}</div>
-                <div>{matchedBike?.variant.varient}</div>
-                <div>{matchedBike?.colorOptions?.color}</div>
+                <div>{p?.bike?.modelName?.model}</div>
+                <div>{p?.bike?.variant.varient}</div>
+                <div>{p?.bike?.colorOptions?.color}</div>
                 <div className="actions">
                   <span className="edit" onClick={() => handleEdit(p._id)}>
                     Edit
