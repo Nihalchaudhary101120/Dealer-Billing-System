@@ -200,7 +200,7 @@ const AllInvoice = () => {
         <div className="trans-form width100">
           <div className="flex2">
             <div className="form-group">
-              <p style={{ "text-align": "left" }}>Start-Date</p>
+              <p style={{ textAlign: "left" }}>Start-Date</p>
               <input
                 type="date"
                 value={find.startDate}
@@ -209,7 +209,7 @@ const AllInvoice = () => {
               />
             </div>
             <div className="form-group">
-              <p style={{ "text-align": "left" }}>End-Date</p>
+              <p style={{textAlign: "left" }}>End-Date</p>
               <input
                 type="date"
                 value={find.endDate}
@@ -219,13 +219,7 @@ const AllInvoice = () => {
             </div>
 
             <div className="form-group excel">
-              <button
-                type="button"
-                onClick={excelExportInvoices}
-                className="filter-btn1"
-              >
-                Excel
-              </button>
+
 
               <button
                 type="button"
@@ -233,6 +227,13 @@ const AllInvoice = () => {
                 className="filter-btn"
               >
                 Find
+              </button>
+              <button
+                type="button"
+                onClick={excelExportInvoices}
+                className="filter-btn1"
+              >
+                Excel
               </button>
             </div>
           </div>
