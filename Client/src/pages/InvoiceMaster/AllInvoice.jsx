@@ -148,8 +148,12 @@ const AllInvoice = () => {
 
     // ── Data Rows ────────────────────────────────────────────────────────────
     let sr = 0;
+    let cgstAmt=0;
+    let sgstAmt=0;
     allInvoice.forEach((inv) => {
       sr += 1;
+      cgstAmt=inv.taxableAmount*inv.cgst*0.01;
+      sgstAmt=inv.taxableAmount*inv.sgst*0.01;
 
       const row = workSheet.addRow({
         serial: sr,
@@ -164,8 +168,8 @@ const AllInvoice = () => {
         rate: inv.cgst + inv.sgst || "",
         amt: inv?.bike?.basePrice || "",
         taxableAmount: inv?.taxableAmount,
-        cgst: inv?.cgst,
-        sgst: inv?.sgst,
+        cgst: cgstAmt,
+        sgst: sgstAmt,
         totalAmount: inv?.totalAmount,
         bill: inv?.billType,
         bank: inv?.financeCompany?.companyName || "",

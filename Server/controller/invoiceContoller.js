@@ -61,12 +61,17 @@ export const addInvoice = async (req, res) => {
                 })
                 .sort({ invoiceNumber: -1 });
 
-            created = await invoice.create({ invoiceNumber: (latestInvoice.invoiceNumber + 1), invoiceDate: today, status, customerName, customerFatherName, customerAddress, customerDistrict, customerState, customerPhone, billType, isHp, financeCompany, customerGstNumber, bike, chassisNumber, engineNumber, discount, taxableAmount, cgst, sgst, totalAmount, dealer, scheme });
+            const nextInvoiceNumber = latestInvoice
+                ? latestInvoice.invoiceNumber + 1
+                : 1; // ✅ RESET TO 1 ON APRIL 1
+
+
+            created = await invoice.create({ invoiceNumber: nextInvoiceNumber, invoiceDate: today, status, customerName, customerFatherName, customerAddress, customerDistrict, customerState, customerPhone, billType, isHp, financeCompany, customerGstNumber, bike, chassisNumber, engineNumber, discount, taxableAmount, cgst, sgst, totalAmount, dealer, scheme });
         } else {
             created = await invoice.create({ status, customerName, customerFatherName, customerAddress, customerGstNumber, scheme, customerDistrict, customerState, customerPhone, billType, isHp, financeCompany, bike, chassisNumber, engineNumber, discount, taxableAmount, cgst, sgst, totalAmount, dealer, });
         }
 
-        if (!created) res.status(400).json({ message: "Error creating invoice", success: false });
+        if (!created) return res.status(400).json({ message: "Error creating invoice", success: false });
 
         res.status(200).json({ created, message: "Invoice created successfully", success: true });
 
