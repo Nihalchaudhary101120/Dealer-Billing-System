@@ -12,6 +12,7 @@ export const addInvoice = async (req, res) => {
             customerPhone,
             customerGstNumber,
             billType,
+            basePrice,
             isHp,
             financeCompany,
             bike,
@@ -66,9 +67,9 @@ export const addInvoice = async (req, res) => {
                 : 1; // ✅ RESET TO 1 ON APRIL 1
 
 
-            created = await invoice.create({ invoiceNumber: nextInvoiceNumber, invoiceDate: today, status, customerName, customerFatherName, customerAddress, customerDistrict, customerState, customerPhone, billType, isHp, financeCompany, customerGstNumber, bike, chassisNumber, engineNumber, discount, taxableAmount, cgst, sgst, totalAmount, dealer, scheme });
+            created = await invoice.create({ invoiceNumber: nextInvoiceNumber, invoiceDate: today, status, customerName, customerFatherName, customerAddress, customerDistrict, customerState, customerPhone, billType, basePrice,isHp, financeCompany, customerGstNumber, bike, chassisNumber, engineNumber, discount, taxableAmount, cgst, sgst, totalAmount, dealer, scheme });
         } else {
-            created = await invoice.create({ status, customerName, customerFatherName, customerAddress, customerGstNumber, scheme, customerDistrict, customerState, customerPhone, billType, isHp, financeCompany, bike, chassisNumber, engineNumber, discount, taxableAmount, cgst, sgst, totalAmount, dealer, });
+            created = await invoice.create({ status, customerName, customerFatherName, customerAddress, customerGstNumber, scheme, customerDistrict, customerState, customerPhone, billType,basePrice, isHp, financeCompany, bike, chassisNumber, engineNumber, discount, taxableAmount, cgst, sgst, totalAmount, dealer, });
         }
 
         if (!created) return res.status(400).json({ message: "Error creating invoice", success: false });
@@ -107,6 +108,7 @@ export const updateInvoice = async (req, res) => {
             customerPhone,
             customerGstNumber,
             billType,
+            basePrice,
             isHp,
             financeCompany,
             bike,
@@ -165,6 +167,7 @@ export const updateInvoice = async (req, res) => {
         old.customerPhone = customerPhone;
         old.customerGstNumber = customerGstNumber;
         old.billType = billType;
+        old.basePrice=basePrice;
         old.isHp = isHp;
         old.financeCompany = financeCompany || null;
         old.bike = bike;

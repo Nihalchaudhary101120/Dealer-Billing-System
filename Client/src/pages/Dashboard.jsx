@@ -7,6 +7,7 @@ import Dealer from "./Dealer";
 import BikeMaster from './Bikemaster/BikeRoutes';
 import BankMaster from "./Bank";
 import InvoiceMaster from './InvoiceMaster/InvoiceRoute';
+import PartMaster from "./Parts/partRoute";
 
 
 const Dashboard = () => {
@@ -24,6 +25,7 @@ const Dashboard = () => {
                     <Route path="/bike/*" element={<BikeMaster />} />
                     <Route path="/bank" element={<BankMaster />} />
                     <Route path="/invoice/*" element={<InvoiceMaster />} />
+                    <Route path="/part/*" element ={<PartMaster/>} />
                 </Routes>
             </div>
         </>

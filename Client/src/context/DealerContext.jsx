@@ -14,7 +14,7 @@ export function DealerProvider({ children }) {
 
     async function getAllDealers() {
         try {
-            setLoading(true);
+            setLoading(true); 
 
             const res = await api.get("/dealer/");
             if (res.data.success) {

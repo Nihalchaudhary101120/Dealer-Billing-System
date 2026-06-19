@@ -20,6 +20,7 @@ const Invoice = () => {
     color: "",
     variant: ""
   });
+  
 
   const [loading, setLoading] = useState(false);
 
@@ -33,6 +34,7 @@ const Invoice = () => {
     customerPhone: "",
     customerGstNumber: "",
     billType: "Cash",
+    basePrice:"",
     isHp: false,
     financeCompany: "",
     bike: "",
@@ -113,10 +115,11 @@ const Invoice = () => {
       isHp: prev.billType === "Credit",
       totalAmount: finalAmt.toFixed(2),
       taxableAmount: taxableAmt,
+      basePrice:basePrice,
       bike: matchedBike?._id,
       discount: matchScheme?.value,
     }));
-  }, [newInvoice.billType, taxableAmt, finalAmt, matchedBike]);
+  }, [newInvoice.billType, basePrice, taxableAmt, finalAmt, matchedBike]);
 
   useEffect(() => {
     if (!id) return;
@@ -179,6 +182,7 @@ const Invoice = () => {
           customerPhone: "",
           customerGstNumber: "",
           billType: "Cash",
+          basePrice:"",
           isHp: false,
           financeCompany: "",
           bike: "",
@@ -594,7 +598,7 @@ const Invoice = () => {
                   <input
                     type="number"
                     readOnly
-                    value={matchedBike?.basePrice ?? ""}
+                    value={newInvoice?.basePrice ?? ""}
                   />
                 </div>
 

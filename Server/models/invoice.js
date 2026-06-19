@@ -8,6 +8,10 @@ const InvoiceSchema = new mongoose.Schema({
         enum: ["DRAFT", "FINAL", "CANCELLED"],
         default: "DRAFT"
     },
+    basePrice:{
+        type:Number,
+        required:true
+    },
     
     customerName: {
         type: String,

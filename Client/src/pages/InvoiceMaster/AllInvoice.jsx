@@ -166,7 +166,7 @@ const AllInvoice = () => {
         quan: "1",
         unit: "PCS",
         rate: inv.cgst + inv.sgst || "",
-        amt: inv?.bike?.basePrice || "",
+        amt: inv?.basePrice || inv?.bike?.basePrice || "",
         taxableAmount: inv?.taxableAmount,
         cgst: cgstAmt,
         sgst: sgstAmt,

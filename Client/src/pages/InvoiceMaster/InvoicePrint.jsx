@@ -120,7 +120,7 @@ const InvoicePrint = ({ invoiceId, onClose }) => {
   const dealer = invoice.dealer || {};
   const scheme = invoice.scheme || {};
 
-  const basePrice = Number(bike.basePrice || 0);
+  const basePrice = Number(invoice?.basePrice || bike?.basePrice || 0);
   const qty = 1;
   const disc = Number(invoice.discount || 0);
   const taxable = Number(invoice.taxableAmount || 0);

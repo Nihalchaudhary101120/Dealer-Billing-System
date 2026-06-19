@@ -13,6 +13,9 @@ import bikeVarientRoute from "./routes/bikeVarientRoutes.js";
 import bikeColorRoute from "./routes/bikeColorRoutes.js";
 import invoiceRoute from "./routes/invoiceRoutes.js";
 import schemeRoute from "./routes/bikeSchemeRoutes.js";
+import partRoute from "./routes/partRoutes.js";
+import hsnRoutes from "./routes/hsnRoutes.js";
+
 
 connectDB();
 const app = express();
@@ -45,6 +48,8 @@ app.use("/varient", bikeVarientRoute);
 app.use("/color", bikeColorRoute);
 app.use("/scheme",schemeRoute);
 app.use("/invoice",invoiceRoute);
+app.use("/part",partRoute);
+app.use("/hsn",hsnRoutes);
 
 
 const port = 3000;
