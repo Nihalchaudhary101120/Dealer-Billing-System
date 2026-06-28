@@ -90,7 +90,6 @@ export const getAllPartInvoices = async (req, res) => {
             .populate("billTo")
             .populate("BikeModel.modelName")
             .populate("BikeModel.variant")
-            .populate("BikeModel.colorOptions")
             .populate("parts.part")
             .populate("parts.hsn")
             .sort({ createdAt: -1 });
@@ -119,7 +118,6 @@ export const getSingleInvoice = async (req, res) => {
             .populate("billTo")
             .populate("BikeModel.modelName")
             .populate("BikeModel.variant")
-            .populate("BikeModel.colorOptions")
             .populate("parts.part")
             .populate("parts.hsn");
 
