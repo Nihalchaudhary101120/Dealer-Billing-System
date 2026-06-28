@@ -3,24 +3,23 @@ import api from "../api/api";
 import { useToast } from './ToastContext';
 import { useAuth } from './AuthContext';
 
-const PartContext = createContext();
+const HsnContext = createContext();
 
-export function PartProvider({ children }) {
+export function HsnProvider({ children }) {
     const { showToast } = useToast();
-    const [parts, setParts] = useState([]);
+    const [hsns, setHsns] = useState([]);
     const [loading, setLoading] = useState(false);
     const { isAuthenticated } = useAuth();
 
-    async function getAllParts() {
+    async function getAllHsns() {
         try {
             setLoading(true);
 
-            const res = await api.get("/part/");
+            const res = await api.get("/hsn/");
             if (res.data.success) {
-                setParts(res.data.parts);
-            }
-            else {
-                showToast(res?.data?.message || "Error fetching parts", "error");
+                setHsns(res.data.hsns);
+            } else {
+                showToast(res?.data?.message || "Error fetching Hsns", "error");
             }
             return res.data;
         } catch (err) {
@@ -31,15 +30,16 @@ export function PartProvider({ children }) {
         }
     };
 
-    async function addPart(payload) {
+    async function addHsn(payload) {
         try {
             setLoading(true);
-            const res = await api.post("/part/", payload);
+            const res = await api.post("/hsn/", payload);
             if (res?.data?.success) {
-                showToast(res.data?.message || "Added successfully", "success");
-                setParts(prev => [...prev, res?.data?.created]);
+                showToast(res.data?.message || "Adding successfully", "success");
+                setHsns(prev => [...prev, res?.data?.created]);
             } else {
                 showToast(res.data?.message, "error");
+
             }
             return res;
         } catch (err) {
@@ -50,35 +50,36 @@ export function PartProvider({ children }) {
         }
     };
 
-    async function updatePart(id, payload) {
+    async function updateHsn(id, payload) {
         try {
             setLoading(true);
 
-            const res = await api.patch(`/part/${id}`, payload);
+            const res = await api.patch(`/hsn/${id}`, payload);
             if (res?.data?.success) {
                 showToast(res.data?.message || "Updated successfully", "success");
-                setParts((prev) =>
-                    prev.map((d) => (d._id === id ? res.data.updated : d))
-                );
+                setHsns((prev) =>
+                    prev.map((d) => (d._id === id ? res.data.updated : d)));
+
             } else {
                 showToast(res.data?.message, "error");
             }
-
-        } catch (err) {
+        }
+        catch (err) {
             console.error(err?.response?.data);
             throw err;
         } finally {
             setLoading(false);
         }
+
     };
 
-    async function deletePart(id) {
+    async function deleteHsn(id) {
         try {
             setLoading(true);
-            const res = await api.delete(`/part/${id}`);
+            const res = await api.delete(`/hsn/${id}`);
             if (res?.data?.success) {
                 showToast(res.data?.message || "Deleted successfully", "success");
-                setParts((prev) => prev.filter(c => c._id !== id));
+                setHsns((prev) => prev.filter(c => c._id !== id));
             } else {
                 showToast(res.data?.message, "error");
             }
@@ -90,15 +91,18 @@ export function PartProvider({ children }) {
         }
     };
 
-    useEffect(()=>{
-        if(!isAuthenticated) return;
-        getAllParts();
-    },[isAuthenticated]);
+    useEffect(() => {
+        if (!isAuthenticated) {
+            setHsns([]);
+            return
+        };
+        getAllHsns();
+    }, [isAuthenticated]);
 
-    return <PartContext.Provider value={{parts , loading ,deletePart ,addPart,getAllParts,updatePart}}>{children}</PartContext.Provider>
+    return <HsnContext.Provider value={{ hsns, loading, deleteHsn, addHsn, getAllHsns, updateHsn }}>{children}</HsnContext.Provider>
+
 
 }
-
-export function usePart(){
-    return useContext(PartContext);
+export function useHsn() {
+    return useContext(HsnContext);
 }

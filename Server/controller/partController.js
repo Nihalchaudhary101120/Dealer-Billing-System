@@ -1,4 +1,4 @@
-import part from "../models/part.js";
+import part from "../models/partModels/part.js";
 
 export const addPart = async(req,res)=>{
     try{
@@ -10,6 +10,7 @@ export const addPart = async(req,res)=>{
         if(exist) return res.status(400).json({message: "item already present", success:false});
 
         const created = await part.create({itemNo,particulars,rate,hsn});
+        await created.populate("hsn");
         if(!created) return res.status(400).json({message:"Error creating in parts" , success:false});
 
         res.status(200).json({created , message:"created Successfully",success:true});
@@ -21,7 +22,7 @@ export const addPart = async(req,res)=>{
 
 export const getAllPart = async(req,res)=>{
     try{
-        const parts = await part.find();
+        const parts = await part.find().populate("hsn").sort({createdAt :-1});
         if(!parts) return res.status(404).json({message:"parts not found",success:false});
         res.status(200).json({parts,message:"parts fetched successfully", success:true});
     }catch(err){
@@ -34,7 +35,7 @@ export const updatePart = async (req,res)=>{
         const updated = await part.findByIdAndUpdate(req.params.id,req.body ,{
             new:true,
             runValidators:true
-        });
+        }).populate("hsn");
         if(!updated) return res.status(404).json({message:"part not found", success:false});
         res.status(200).json({updated,message:"updated successfully",success:true});
     }catch(err){

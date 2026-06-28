@@ -1,107 +1,121 @@
+/* ============================================================
+   TVS DMS — Color / Model / Variant Pages
+   ============================================================ */
 
-
-
-
-/* Container */
+/* ── Container ── */
 .container-wrapper {
-  background: #fff;
-  padding: 1.5rem;
-  border-radius: 12px;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  background: var(--color-card, #fff);
+  padding: var(--space-6, 24px);
+  border-radius: var(--radius-lg, 12px);
+  box-shadow: var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05));
   width: 80vw;
   max-width: 800px;
-  margin: 40px auto;
-  font-family: "Poppins", sans-serif;
+  margin: var(--space-8, 32px) auto;
+  font-family: 'Inter', sans-serif;
+  border: 1px solid var(--color-border-light, #F1F5F9);
+  animation: slideUp 0.3s ease;
 }
 
-/* Top bar with search and button */
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Top Bar ── */
 .top-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: var(--space-5, 20px);
+  gap: var(--space-4, 16px);
 }
 
-/* Search input */
+/* ── Search Input ── */
 .search-input {
-  background-color: transparent;
-  padding: 8px 14px;
-  border: 2px solid gray;
-  border-radius: 8px;
-  width: 250px;
-  font-size: 14px;
-  transition: transform 0.3s ease;
-  color: black;
+  background-color: var(--color-bg, #F5F7FB);
+  padding: 10px 16px;
+  border: 1.5px solid var(--color-border, #E2E8F0);
+  border-radius: var(--radius-full, 9999px);
+  width: 280px;
+  font-size: var(--text-base, 14px);
+  transition: all 0.2s ease;
+  color: var(--color-text, #1E293B);
+  font-family: 'Inter', sans-serif;
 }
 
-/* .search-input:focus {
-    border: 2px solid red;
-
+.search-input:focus {
+  outline: none;
+  border-color: #2563EB;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  background: white;
 }
 
 .search-input::placeholder {
-  color: #9ca3af;
+  color: var(--color-text-muted, #94A3B8);
 }
 
-.search-input:focus::placeholder {
-  opacity: 0;
-} */
-
-/* Add button */
+/* ── Add Button ── */
 .add-btn-con {
-  background-color: #2563eb;
+  background: linear-gradient(135deg, #2563EB 0%, #1E3A8A 100%);
   color: #fff;
   border: none;
   height: fit-content;
-  padding: 10px 18px;
-  border-radius: 8px;
-  font-weight: 500;
+  padding: 10px 22px;
+  border-radius: var(--radius-md, 8px);
+  font-weight: 600;
   cursor: pointer;
-  transition: 0.3s ease;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
+  font-family: 'Inter', sans-serif;
 }
 
 .add-btn:hover {
-  background-color: #1d4ed8;
+  background: linear-gradient(135deg, #1E3A8A 0%, #172E6E 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
 }
 
-/* Table styles */
+/* ── Table Grid ── */
 .grid-layout {
-  /* display: grid;
-  grid-template-columns: 120px 200px 1fr;
-  padding: 20px 30px;
-  align-items: center;
-  text-align: left;
-  font-size: 16px;
-  background-color: white; */
-
-
   display: grid;
   grid-template-columns: 0.3fr 2fr 1fr 1fr 1.2fr 1fr 1.2fr;
-  padding: 10px 14px;
+  padding: 12px 16px;
   align-items: center;
   text-align: left;
-  font-size: 14px;
+  font-size: var(--text-base, 14px);
 }
 
 .header-section {
-  background-color: #f9fafb;
+  background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%);
   font-weight: 600;
-  border-bottom: 2px solid #e5e7eb;
+  border-bottom: 2px solid var(--color-border, #E2E8F0);
+  font-size: var(--text-sm, 13px);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-text, #1E293B);
+  position: sticky;
+  top: 0;
+  z-index: 5;
 }
 
 .data-row {
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--color-border-light, #F1F5F9);
+  transition: all 0.2s ease;
+}
+
+.data-row:nth-child(even) {
+  background-color: #FAFBFD;
 }
 
 .data-row:hover {
-  background-color: #f9fafb;
+  background-color: rgba(37, 99, 235, 0.04);
 }
 
 .data-row:last-child {
   border-bottom: none;
 }
 
-/* Action buttons */
+/* ── Action Buttons ── */
 .action-buttons {
   display: flex;
   gap: 8px;
@@ -110,84 +124,97 @@
 
 .action-buttons span {
   cursor: pointer;
-  font-weight: 500;
-  font-size: 16px;
-  transition: opacity 0.2s;
-
-  /* cursor: pointer;
-  font-weight: 500; */
+  font-weight: 600;
+  font-size: var(--text-sm, 13px);
+  transition: all 0.2s ease;
+  padding: 4px 8px;
+  border-radius: 6px;
 }
 
 .action-buttons span:hover {
-  opacity: 0.7;
+  opacity: 1;
 }
 
 .btn-edit {
-  color: #2563eb;
+  color: #2563EB;
+}
+.btn-edit:hover {
+  background: rgba(37, 99, 235, 0.08);
 }
 
 .btn-delete {
-  color: #dc2626;
+  color: #EF4444;
+}
+.btn-delete:hover {
+  background: rgba(239, 68, 68, 0.08);
 }
 
-/* Form wrapper */
+/* ── Form Wrapper (add/edit inline) ── */
 .form-wrapper {
   display: flex;
-  gap: 10px;
-  margin: 20px 0;
-  padding: 20px;
-  background-color: white;
-  border-radius: 8px;
+  gap: 12px;
+  margin: var(--space-5, 20px) 0;
+  padding: var(--space-5, 20px);
+  background-color: var(--color-bg, #F5F7FB);
+  border-radius: var(--radius-md, 8px);
+  border: 1px solid var(--color-border-light, #F1F5F9);
+  animation: slideUp 0.2s ease;
 }
 
 .name-input,
 .inline-edit {
-  padding: 4px 14px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  font-size: 16px;
+  padding: 10px 14px;
+  border: 1.5px solid var(--color-border, #E2E8F0);
+  border-radius: var(--radius-md, 8px);
+  font-size: var(--text-base, 14px);
   flex: 1;
-  
+  transition: all 0.2s ease;
+  font-family: 'Inter', sans-serif;
 }
 
 .name-input:focus,
 .inline-edit:focus {
   outline: none;
-  border-color: #3b82f6;
+  border-color: #2563EB;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
 .form-wrapper button {
-  padding: 10px 20px;
+  padding: 10px 22px;
   border: none;
-  border-radius: 6px;
-  font-weight: 500;
+  border-radius: var(--radius-md, 8px);
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.2s ease;
+  font-family: 'Inter', sans-serif;
 }
 
 .form-wrapper button:first-of-type {
-  background-color: #2563eb;
+  background: linear-gradient(135deg, #2563EB, #1E3A8A);
   color: white;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
 }
 
 .form-wrapper button:first-of-type:hover {
-  background-color: #1d4ed8;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
 }
 
 .form-wrapper button:last-of-type {
-  background-color: #e5e7eb;
-  color: #374151;
+  background-color: var(--color-border, #E2E8F0);
+  color: var(--color-text, #1E293B);
 }
 
 .form-wrapper button:last-of-type:hover {
-  background-color: #d1d5db;
+  background-color: #CBD5E1;
 }
 
-/* Save/Cancel in inline edit */
+/* ── Save/Cancel Inline ── */
 .btn-save {
-  color: #16a34a !important;
+  color: #22C55E !important;
+  font-weight: 600;
 }
 
 .btn-cancel {
-  color: #6b7280 !important;
+  color: #64748B !important;
 }

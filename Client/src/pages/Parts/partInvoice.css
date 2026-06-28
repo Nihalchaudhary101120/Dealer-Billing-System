@@ -1,0 +1,473 @@
+/* =====================================================
+   PART INVOICE — Complete Stylesheet
+   ===================================================== */
+
+/* ── Page ── */
+.pi-page {
+  padding: 2vh 2vw;
+  font-family: "Poppins", sans-serif;
+  background: #f3f4f6;
+  min-height: 100vh;
+}
+
+/* ── Card ── */
+.pi-card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 1.6rem 2rem;
+  box-sizing: border-box;
+}
+
+/* =====================================================
+   TWO-COLUMN MAIN LAYOUT
+   Left  = Dealer / BillTo / BillType / JCNo / Date / Bike / Service
+   Right = Customer / Vehicle
+   ===================================================== */
+.pi-two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 1rem;
+}
+
+/* Each column stacks its own form groups */
+.pi-col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* =====================================================
+   SECTION TITLE
+   ===================================================== */
+.pi-section-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #2563eb;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 0 0 6px 0;
+  padding-bottom: 4px;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+/* =====================================================
+   INLINE ROW  (2, 3, or 4 items side by side)
+   ===================================================== */
+.pi-inline-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.pi-inline-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+}
+
+.pi-inline-4 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 10px;
+}
+
+/* Full-width single field */
+.pi-inline-full {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+/* =====================================================
+   FORM GROUP
+   ===================================================== */
+.pi-fg {
+  display: flex;
+  flex-direction: column;
+}
+
+.pi-fg label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 4px;
+  white-space: nowrap;
+}
+
+.pi-fg input,
+.pi-fg select {
+  padding: 8px 11px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  font-size: 13px;
+  background: #fff;
+  color: #111827;
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.pi-fg input:focus,
+.pi-fg select:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.pi-fg input:read-only {
+  background: #f3f4f6;
+  color: #6b7280;
+  cursor: not-allowed;
+}
+
+/* =====================================================
+   TABLE SECTION  (Parts / Labour)
+   ===================================================== */
+.pi-table-section {
+  margin-top: 1.4rem;
+}
+
+.pi-table-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.pi-table-title-row h4 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.pi-add-btn {
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  padding: 7px 16px;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s;
+}
+
+.pi-add-btn:hover {
+  background: #1e40af;
+}
+
+/* Scrollable table wrapper */
+.pi-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+/* ── PARTS table ── */
+.pi-parts-head {
+  display: grid;
+  grid-template-columns: 0.6fr 1.8fr 0.5fr 0.8fr 0.8fr 0.8fr 1fr 1.1fr 1.1fr 1fr 1fr;
+  background: #f0f3f9;
+  font-weight: 700;
+  font-size: 12px;
+  color: #1f2937;
+  border-bottom: 2px solid #d0d0d0;
+  padding: 10px 14px;
+  white-space: nowrap;
+  min-width: 1000px;
+  box-sizing: border-box;
+}
+
+.pi-parts-row {
+  display: grid;
+  grid-template-columns: 0.6fr 1.8fr 0.5fr 0.8fr 0.8fr 0.8fr 1fr 1.1fr 1.1fr 1fr 1fr;
+  font-size: 12px;
+  color: #374151;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 9px 14px;
+  white-space: nowrap;
+  min-width: 1000px;
+  box-sizing: border-box;
+  transition: background 0.15s;
+  align-items: center;
+}
+
+.pi-parts-row:last-child {
+  border-bottom: none;
+}
+
+.pi-parts-row:hover {
+  background: #f8fafc;
+}
+
+/* ── LABOUR table ── */
+.pi-labour-head {
+  display: grid;
+  grid-template-columns: 2fr 0.6fr 0.9fr 0.9fr 1fr 1.1fr 1.1fr 1fr 1fr;
+  background: #f0f3f9;
+  font-weight: 700;
+  font-size: 12px;
+  color: #1f2937;
+  border-bottom: 2px solid #d0d0d0;
+  padding: 10px 14px;
+  white-space: nowrap;
+  min-width: 700px;
+  box-sizing: border-box;
+}
+
+.pi-labour-row {
+  display: grid;
+  grid-template-columns: 2fr 0.6fr 0.9fr 0.9fr 1fr 1.1fr 1.1fr 1fr 1fr;
+  font-size: 12px;
+  color: #374151;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 9px 14px;
+  white-space: nowrap;
+  min-width: 700px;
+  box-sizing: border-box;
+  transition: background 0.15s;
+  align-items: center;
+}
+
+.pi-labour-row:last-child {
+  border-bottom: none;
+}
+
+.pi-labour-row:hover {
+  background: #f8fafc;
+}
+
+/* Empty row */
+.pi-table-empty {
+  padding: 18px;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 13px;
+  min-width: 700px;
+}
+
+/* Action links */
+.pi-edit {
+  color: #2563eb;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 12px;
+  margin-right: 8px;
+}
+
+.pi-edit:hover { text-decoration: underline; }
+
+.pi-delete {
+  color: #ef4444;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.pi-delete:hover { text-decoration: underline; }
+
+/* =====================================================
+   SUMMARY BOX
+   ===================================================== */
+.pi-summary-section {
+  margin-top: 1.4rem;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.pi-summary-section h4 {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.pi-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+}
+
+/* =====================================================
+   SUBMIT
+   ===================================================== */
+.pi-submit-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1.6rem;
+}
+
+.pi-submit-btn {
+  background: #14b886;
+  color: #fff;
+  border: none;
+  padding: 11px 44px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s;
+  box-shadow: 0 2px 8px rgba(20, 184, 134, 0.3);
+}
+
+.pi-submit-btn:hover {
+  background: #0f9b6e;
+  transform: translateY(-1px);
+}
+
+.pi-submit-btn:disabled {
+  background: #d1d5db;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* =====================================================
+   MODAL
+   ===================================================== */
+.pi-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.pi-modal-box {
+  background: #fff;
+  width: 560px;
+  max-width: 95vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  animation: pi-popup 0.2s ease;
+  box-sizing: border-box;
+}
+
+@keyframes pi-popup {
+  from { transform: scale(0.94); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+
+.pi-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.pi-modal-header h3 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.pi-modal-close {
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #6b7280;
+  line-height: 1;
+  transition: color 0.2s;
+}
+
+.pi-modal-close:hover { color: #ef4444; }
+
+/* Modal rows */
+.pi-modal-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.pi-modal-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.pi-modal-full {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+/* Modal buttons */
+.pi-modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.pi-modal-save {
+  background: #14b886;
+  color: #fff;
+  border: none;
+  padding: 9px 28px;
+  border-radius: 7px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.pi-modal-save:hover { background: #0f9b6e; }
+
+.pi-modal-cancel {
+  background: #ef4444;
+  color: #fff;
+  border: none;
+  padding: 9px 22px;
+  border-radius: 7px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.pi-modal-cancel:hover { background: #dc2626; }
+
+/* =====================================================
+   RESPONSIVE
+   ===================================================== */
+@media (max-width: 1024px) {
+  .pi-two-col {
+    grid-template-columns: 1fr;
+  }
+  .pi-summary-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .pi-inline-3,
+  .pi-inline-4 {
+    grid-template-columns: 1fr 1fr;
+  }
+  .pi-inline-2 {
+    grid-template-columns: 1fr;
+  }
+  .pi-summary-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

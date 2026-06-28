@@ -1,45 +1,68 @@
+/* ============================================================
+   TVS DMS — Bike Master Page
+   ============================================================ */
+
+/* ── Add Button ── */
 .new-item-btn {
-  background-color: #2563eb;
+  background: linear-gradient(135deg, #2563EB 0%, #1E3A8A 100%);
   color: white;
   border: none;
-  padding: 10px 18px;
-  border-radius: 6px;
+  padding: 10px 22px;
+  border-radius: var(--radius-md, 8px);
   cursor: pointer;
-  font-weight: 500;
-  transition: 0.2s;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  font-size: var(--text-base, 14px);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
+  font-family: 'Inter', sans-serif;
 }
 
 .new-item-btn:hover {
-  background-color: #1d4ed8;
+  background: linear-gradient(135deg, #1E3A8A 0%, #172E6E 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
 }
 
-/* Modal Overlay */
+.new-item-btn:active {
+  transform: translateY(0);
+}
+
+/* ── Modal Overlay ── */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.45);
+  background: rgba(15, 23, 42, 0.5);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  animation: fadeIn 0.2s ease;
 }
 
-/* Modal Box */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ── Modal Box ── */
 .modal {
-  background: #fff;
-  padding: 25px;
-  width: 420px;
-  border-radius: 10px;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.25);
-  animation: popup 0.3s ease;
+  background: var(--color-card, #fff);
+  padding: var(--space-8, 32px);
+  width: 440px;
+  border-radius: var(--radius-xl, 16px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.06);
+  animation: popup 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid var(--color-border-light, #F1F5F9);
 }
 
 @keyframes popup {
   from {
-    transform: scale(0.9);
+    transform: scale(0.95);
     opacity: 0;
   }
   to {
@@ -48,64 +71,101 @@
   }
 }
 
+/* ── Form Groups ── */
 .form-group {
   display: flex;
   flex-direction: column;
-  margin-bottom: 15px;
+  margin-bottom: var(--space-4, 16px);
 }
 
 .form-group label {
-  margin-bottom: 5px;
+  margin-bottom: 6px;
   font-weight: 500;
+  font-size: var(--text-sm, 13px);
+  color: var(--color-text, #1E293B);
 }
 
 .form-group input,
 .form-group select {
-  padding: 8px;
-  border-radius: 5px;
-  border: 1px solid #d1d5db;
-  font-size: 14px;
-  background-color: transparent;
-  color: black;
+  padding: 10px 12px;
+  border-radius: var(--radius-md, 8px);
+  border: 1.5px solid var(--color-border, #E2E8F0);
+  font-size: var(--text-base, 14px);
+  background-color: var(--color-card, #fff);
+  color: var(--color-text, #1E293B);
+  transition: all 0.2s ease;
+  font-family: 'Inter', sans-serif;
 }
 
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #2563EB;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* ── Modal Buttons ── */
 .modal-buttons {
   display: flex;
   justify-content: flex-end;
-  gap: 10px;
+  gap: var(--space-3, 12px);
+  margin-top: var(--space-6, 24px);
 }
 
 .submit-btn {
-  background-color: #16a34a;
+  background: linear-gradient(135deg, #22C55E, #16A34A);
   color: white;
   border: none;
-  padding: 8px 15px;
-  border-radius: 6px;
+  padding: 10px 20px;
+  border-radius: var(--radius-md, 8px);
   cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(34, 197, 94, 0.25);
+}
+
+.submit-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.35);
 }
 
 .cancel-btn {
-  background-color: #ef4444;
+  background: linear-gradient(135deg, #EF4444, #DC2626);
   color: white;
   border: none;
-  padding: 8px 15px;
-  border-radius: 6px;
+  padding: 10px 20px;
+  border-radius: var(--radius-md, 8px);
   cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.2);
 }
 
-/* Table Grid */
+.cancel-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+/* ── Table Grid ── */
 .tabular-grid {
   display: grid;
   grid-template-columns: 0.6fr 0.6fr 1fr 1.2fr 1fr 0.8fr 1fr 1fr;
   align-items: center;
   text-align: left;
-  font-size: 14px;
-  padding: 10px 14px;
-  min-width: 700px; /* allows scrolling on small screens */
+  font-size: var(--text-base, 14px);
+  padding: 12px 16px;
+  min-width: 700px;
 }
 
 .tabular-header {
-  background-color: #f9fafb;
+  background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%);
   font-weight: 600;
-  border-bottom: 2px solid #e5e7eb;
+  border-bottom: 2px solid var(--color-border, #E2E8F0);
+  font-size: var(--text-sm, 13px);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-text, #1E293B);
+  position: sticky;
+  top: 0;
+  z-index: 5;
 }

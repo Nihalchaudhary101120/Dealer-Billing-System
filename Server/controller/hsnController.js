@@ -1,4 +1,4 @@
-import hsn from "../models/partModels/hsn";
+import hsn from "../models/partModels/hsn.js";
 
 export const addHsn = async (req, res) => {
     try {

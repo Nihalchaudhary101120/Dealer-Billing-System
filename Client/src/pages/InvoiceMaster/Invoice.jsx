@@ -216,8 +216,8 @@ const Invoice = () => {
   const customerDistrictRef = useRef(null);
   const customerPhoneRef = useRef(null);
   const customerGstRef = useRef(null);
-  const customerCgstRef = useRef(null);
-  const customerSgstRef = useRef(null);
+  // const customerCgstRef = useRef(null);
+  // const customerSgstRef = useRef(null);
   const customerChassisRef = useRef(null);
   const customerEngineRef = useRef(null);
   const submitRef = useRef(null);
@@ -568,6 +568,7 @@ const Invoice = () => {
                 <div className="form-group">
                   <label>SGST %*</label>
                   <input
+                    readOnly
                     type="number"
                     value={newInvoice.sgst}
                     onChange={(e) =>
@@ -582,6 +583,7 @@ const Invoice = () => {
                 <div className="form-group">
                   <label>CGST %*</label>
                   <input
+                    readOnly
                     type="number"
                     value={newInvoice.cgst}
                     onChange={(e) =>

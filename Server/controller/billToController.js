@@ -43,7 +43,7 @@ export const updateBillTo = async (req, res) => {
     }
 };
 
-export const deleteHsn = async (req, res) => {
+export const deleteBillTo = async (req, res) => {
     try {
         const deleted = await billTo.findByIdAndDelete(req.params.id);
         if (!deleted) return res.status(404).json({ message: "Bill To not found", success: false });

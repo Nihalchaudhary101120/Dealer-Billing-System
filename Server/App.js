@@ -15,6 +15,9 @@ import invoiceRoute from "./routes/invoiceRoutes.js";
 import schemeRoute from "./routes/bikeSchemeRoutes.js";
 import partRoute from "./routes/partRoutes.js";
 import hsnRoutes from "./routes/hsnRoutes.js";
+import jcNoRoutes from "./routes/jcNoRoutes.js";
+import partInvoiceRoutes from "./routes/partInvoiceRoutes.js";
+import billToRoutes from "./routes/billToRoutes.js";
 
 
 connectDB();
@@ -50,6 +53,9 @@ app.use("/scheme",schemeRoute);
 app.use("/invoice",invoiceRoute);
 app.use("/part",partRoute);
 app.use("/hsn",hsnRoutes);
+app.use("/jcNo",jcNoRoutes);
+app.use("/partInvoice",partInvoiceRoutes);
+app.use("/billTo",billToRoutes);
 
 
 const port = 3000;

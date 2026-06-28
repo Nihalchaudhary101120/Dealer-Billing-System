@@ -9,6 +9,8 @@ import { DealerProvider } from './context/DealerContext.jsx';
 import { BikeProvider } from './context/BikeContext.jsx';
 import { BankProvider } from './context/BankContext.jsx';
 import { PartProvider } from './context/partContext.jsx';
+import { HsnProvider } from "./context/HsnContext.jsx";
+import { BillToProvider } from "./context/BillToContext.jsx";
 
 
 createRoot(document.getElementById('root')).render(
@@ -17,13 +19,17 @@ createRoot(document.getElementById('root')).render(
       <ToastProvider>
         <AuthProvider>
           <DealerProvider>
-            <PartProvider>
-              <BikeProvider>
-                <BankProvider>
-                  <App />
-                </BankProvider>
-              </BikeProvider>
-            </PartProvider>
+            <HsnProvider>
+              <PartProvider>
+                <BikeProvider>
+                  <BankProvider>
+                    <BillToProvider>
+                      <App />
+                    </BillToProvider>
+                  </BankProvider>
+                </BikeProvider>
+              </PartProvider>
+            </HsnProvider>
           </DealerProvider>
         </AuthProvider>
       </ToastProvider>
