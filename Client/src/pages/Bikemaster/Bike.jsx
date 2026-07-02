@@ -102,13 +102,32 @@ const Bike = () => {
     setShowModal(true);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (e, deactivatePrevious = false) => {
+    if (e) e.preventDefault();
 
     // basic validation before even mapping names
     if (!formData.model || !formData.variant || !formData.colorOptions || !formData.basePrice) {
       showToast("Fill all fields", "error");
       return;
+    }
+
+    // Check for duplicates before sending to server (if not already force-updating)
+    if (!editingId && !deactivatePrevious) {
+      const existing = bikes.find(b => 
+        String(b.modelName?._id) === String(formData.model) &&
+        String(b.variant?._id) === String(formData.variant) &&
+        String(b.colorOptions?._id) === String(formData.colorOptions) &&
+        b.isActive !== false
+      );
+
+      if (existing) {
+        if (window.confirm("A price for this bike combination already exists. Do you want to deactivate the old price and add this new one?")) {
+          handleSubmit(null, true);
+          return;
+        } else {
+          return;
+        }
+      }
     }
 
     // backend expects "modelName" instead of "model"; build a payload accordingly
@@ -119,6 +138,7 @@ const Bike = () => {
       colorOptions: formData.colorOptions,
       basePrice: formData.basePrice,
       hsnCode: formData.hsnCode,
+      deactivatePrevious: deactivatePrevious
     };
 
     console.log("payload to send", payload);
@@ -128,13 +148,24 @@ const Bike = () => {
       if (editingId) {
         await updateBike(editingId, payload);
       } else {
-        await addBike(payload);
+        const response = await addBike(payload);
+        // If server returns duplicate error despite client check (e.g. race condition)
+        if (response?.status === 409 && response?.data?.isDuplicate) {
+          if (window.confirm("A price for this bike combination already exists. Do you want to deactivate the old price and add this new one?")) {
+            handleSubmit(null, true);
+            return;
+          }
+        }
       }
 
       setShowModal(false);
     } catch (err) {
       console.error(err);
-
+      if (err.response?.status === 409 && err.response?.data?.isDuplicate) {
+        if (window.confirm("A price for this bike combination already exists. Do you want to deactivate the old price and add this new one?")) {
+          handleSubmit(null, true);
+        }
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -164,6 +195,7 @@ const Bike = () => {
         <div>Color</div>
         <div>Base Price</div>
         <div>HSN</div>
+        <div>Status</div>
         <div>Actions</div>
       </div>
 
@@ -178,6 +210,9 @@ const Bike = () => {
           <div>{bike.colorOptions?.color}</div>
           <div>₹ {bike.basePrice}</div>
           <div>{bike.hsnCode}</div>
+          <div style={{ color: bike.isActive ? "green" : "red" }}>
+            {bike.isActive ? "Active" : "Inactive"}
+          </div>
           <div className="actions">
             <span onClick={() => openEditModal(bike)} className="edit">Edit</span>
             {" | "}

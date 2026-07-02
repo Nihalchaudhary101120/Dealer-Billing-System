@@ -51,14 +51,12 @@ export function BikeProvider({ children }) {
             console.log(res.data);
             if (res?.data?.success) {
                 showToast(res.data?.message || "Added sucessfully", "success");
-                // const bikesWithAliases = res.data.created.map(b => ({
-                //     ...b,
-                //     modelName: b.modelName.model,
-                //     variant: b.variant.varient,
-                //     colorOptions: b.colorOptions.color
-                // }));
                 console.log("addedbike", res.data.created);
-                setBikes(prev => [...prev, res.data?.created]);
+                if (payload.deactivatePrevious) {
+                    await getAllBikes();
+                } else {
+                    setBikes(prev => [...prev, res.data?.created]);
+                }
             } else {
                 showToast(res.data?.message, "error");
             }

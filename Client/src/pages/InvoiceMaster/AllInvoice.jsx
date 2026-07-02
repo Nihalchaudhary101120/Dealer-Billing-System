@@ -161,8 +161,8 @@ const AllInvoice = () => {
         date: FormatDate(inv.invoiceDate),
         customerName: inv.customerName,
         gst: inv.customerGstNumber || "",
-        bikeModel: inv?.bike?.modelName?.model || "",
-        hsn: inv?.bike?.hsnCode || "",
+        bikeModel: inv?.bike?.modelName?.model || inv?.bikeModel?.model || "",
+        hsn: inv?.bike?.hsnCode || inv?.hsnCode || "",
         quan: "1",
         unit: "PCS",
         rate: inv.cgst + inv.sgst || "",
@@ -287,9 +287,9 @@ const AllInvoice = () => {
                 <div>{p?.invoiceNumber}</div>
                 <div>{p?.customerName}</div>
                 <div>{p?.customerFatherName}</div>
-                <div>{p?.bike?.modelName?.model}</div>
-                <div>{p?.bike?.variant.varient}</div>
-                <div>{p?.bike?.colorOptions?.color}</div>
+                <div>{p?.bike?.modelName?.model || p?.bikeModel?.model || ""}</div>
+                <div>{p?.bike?.variant?.varient || p?.bikeVariant?.varient || p?.bikeVariant?.variant || ""}</div>
+                <div>{p?.bike?.colorOptions?.color || p?.bikeColorOptions?.color || ""}</div>
                 <div className="actions">
                   <span className="edit" onClick={() => handleEdit(p._id)}>
                     Edit

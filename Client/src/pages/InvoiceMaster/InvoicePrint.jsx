@@ -138,9 +138,9 @@ const InvoicePrint = ({ invoiceId, onClose }) => {
       " " + new Date(d).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" });
   };
 
-  const modelName = bike.modelName?.model || bike.modelName || "";
-  const colorName = bike.colorOptions?.color || bike.colorOptions || "";
-  const variantName = bike.variant?.varient || bike.variant || "";
+  const modelName = bike.modelName?.model || invoice.bikeModel?.model || "";
+  const colorName = bike.colorOptions?.color || invoice.bikeColorOptions?.color || "";
+  const variantName = bike.variant?.varient || invoice.bikeVariant?.varient || invoice.bikeVariant?.variant || "";
   const hsnCode = bike.hsnCode || "";
 
   const numberToWords = (num) => {

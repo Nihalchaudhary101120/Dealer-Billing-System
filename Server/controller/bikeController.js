@@ -2,15 +2,23 @@ import Bike from "../models/bike.js";
 
 export const addBike = async (req, res) => {
     try {
-        const { brand, modelName, variant, basePrice, colorOptions, hsnCode } = req.body;
+        const { brand, modelName, variant, basePrice, colorOptions, hsnCode, deactivatePrevious } = req.body;
 
-        if (!brand || !modelName || !variant || !basePrice || !colorOptions || !hsnCode) return res.status(400).json({ message: "Fill all fields", success: false });
+        if (!brand || !modelName || !variant || !basePrice || !colorOptions ) return res.status(400).json({ message: "Fill all fields", success: false });
 
-        const exist = await Bike.findOne({ brand, modelName, variant, colorOptions });
-        if (exist) return res.status(400).json({ message: "Bike already exist", success: false });
+        const exist = await Bike.findOne({ brand, modelName, variant, colorOptions, isActive: true });
+        if (exist) {
+            if (deactivatePrevious) {
+                exist.isActive = false;
+                exist.effectiveTo = new Date();
+                await exist.save();
+            } else {
+                return res.status(409).json({ message: "Bike price already exists for this combination", success: false, isDuplicate: true });
+            }
+        }
 
         // create returns a document, not a query – populate separately afterwards
-        let created = await Bike.create({ brand, modelName, variant, basePrice, colorOptions, hsnCode });
+        let created = await Bike.create({ brand, modelName, variant, basePrice, colorOptions, hsnCode, isActive: true, effectiveFrom: new Date() });
         created = await Bike.findById(created._id)
             .populate("modelName")
             .populate("variant")

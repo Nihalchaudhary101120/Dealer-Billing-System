@@ -16,6 +16,10 @@ export const addInvoice = async (req, res) => {
             isHp,
             financeCompany,
             bike,
+            bikeModel,
+            bikeVariant,
+            bikeColorOptions,
+            hsnCode,
             chassisNumber,
             engineNumber,
             discount,
@@ -67,9 +71,19 @@ export const addInvoice = async (req, res) => {
                 : 1; // ✅ RESET TO 1 ON APRIL 1
 
 
-            created = await invoice.create({ invoiceNumber: nextInvoiceNumber, invoiceDate: today, status, customerName, customerFatherName, customerAddress, customerDistrict, customerState, customerPhone, billType, basePrice, isHp, financeCompany, customerGstNumber, bike, chassisNumber, engineNumber, discount, taxableAmount, cgst, sgst, totalAmount, dealer, scheme });
+            created = await invoice.create({
+                invoiceNumber: nextInvoiceNumber, invoiceDate: today, status, customerName, customerFatherName, customerAddress, customerDistrict, bikeModel,
+                bikeVariant,
+                bikeColorOptions,
+                hsnCode, customerState, customerPhone, billType, basePrice, isHp, financeCompany, customerGstNumber, bike, chassisNumber, engineNumber, discount, taxableAmount, cgst, sgst, totalAmount, dealer, scheme
+            });
         } else {
-            created = await invoice.create({ status, customerName, customerFatherName, customerAddress, customerGstNumber, scheme, customerDistrict, customerState, customerPhone, billType, basePrice, isHp, financeCompany, bike, chassisNumber, engineNumber, discount, taxableAmount, cgst, sgst, totalAmount, dealer, });
+            created = await invoice.create({
+                status, customerName, customerFatherName, customerAddress, customerGstNumber, scheme, customerDistrict, customerState, customerPhone, billType, basePrice, isHp, financeCompany, bike, bikeModel,
+                bikeVariant,
+                bikeColorOptions,
+                hsnCode, chassisNumber, engineNumber, discount, taxableAmount, cgst, sgst, totalAmount, dealer,
+            });
         }
 
         if (!created) return res.status(400).json({ message: "Error creating invoice", success: false });
@@ -112,6 +126,10 @@ export const updateInvoice = async (req, res) => {
             isHp,
             financeCompany,
             bike,
+            bikeModel,
+            bikeVariant,
+            bikeColorOptions,
+            hsnCode,
             chassisNumber,
             engineNumber,
             discount,
@@ -187,6 +205,9 @@ export const updateInvoice = async (req, res) => {
         old.isHp = isHp;
         old.financeCompany = financeCompany || null;
         old.bike = bike;
+        old.bikeModel = bikeModel,
+        old.bikeVariant = bikeVariant,
+        old.bikeColorOptions = bikeColorOptions,
         old.chassisNumber = chassisNumber;
         old.engineNumber = engineNumber;
         old.discount = discount;
@@ -223,8 +244,11 @@ export const getAllDraft = async (req, res) => {
 
         const firstApril = new Date(year, 3, 1);
 
-        const drafts = await invoice.find({ status: "DRAFT", createdAt: { $gte: firstApril } });
-        if (drafts.length==0) return res.status(404).json({ message: "No drafts found", success: false });
+        const drafts = await invoice.find({ status: "DRAFT", createdAt: { $gte: firstApril } })
+            .populate("bikeModel")
+            .populate("bikeVariant")
+            .populate("bikeColorOptions");
+        if (drafts.length == 0) return res.status(404).json({ message: "No drafts found", success: false });
         res.status(200).json({ message: "Drafts fetched", drafts, success: true });
     } catch (err) {
         res.status(500).json({ message: "Error fetching drafts", success: false, error: err.message });
@@ -242,7 +266,10 @@ export const getInvoiceById = async (req, res) => {
                 { path: "variant" },
                 { path: "colorOptions" }
             ]
-        });
+        })
+            .populate("bikeModel")
+            .populate("bikeVariant")
+            .populate("bikeColorOptions");
 
         if (!draftInvoice) return res.status(404).json({ message: "No invoice found", success: false });
         res.status(200).json({ message: " Drafted Invoice fetched successfully", draftInvoice, success: true });
@@ -283,9 +310,13 @@ export const printInvoice = async (req, res) => {
                 { path: "colorOptions" }
             ]
         })
+            .populate("bikeModel")
+            .populate("bikeVariant")
+            .populate("bikeColorOptions")
             .populate("financeCompany");
+            
 
-        if (inv.length==0) return res.status(404).json({ message: "No invoice found", success: false });
+        if (inv.length == 0) return res.status(404).json({ message: "No invoice found", success: false });
 
         res.status(200).json({ message: "invoice fetched successfully", inv, success: true });
 

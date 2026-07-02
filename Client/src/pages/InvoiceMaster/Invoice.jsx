@@ -58,15 +58,30 @@ const Invoice = () => {
  
 
 
-  const matchedBike = Array.isArray(bikes) ? bikes.find((b) =>
-    String(b.modelName?._id) === String(newBike.model) &&
-    String(b.colorOptions?._id) === String(newBike.color) &&
-    String(b.variant?._id) === String(newBike.variant)
-  ) : null
+  const referenceDate = useMemo(() => {
+    return newInvoice.invoiceDate || newInvoice.createdAt || new Date();
+  }, [newInvoice.invoiceDate, newInvoice.createdAt]);
+
+  const matchedBike = Array.isArray(bikes) ? bikes.find((b) => {
+    const isSameCombination =
+      String(b?.modelName?._id) === String(newBike.model) &&
+      String(b?.colorOptions?._id) === String(newBike.color) &&
+      String(b?.variant?._id) === String(newBike.variant);
+
+    if (!isSameCombination) return false;
+
+    const effFrom = new Date(b.effectiveFrom);
+    const effTo = b.effectiveTo ? new Date(b.effectiveTo) : new Date(8640000000000000);
+
+    const refDate = bikeChanged ? new Date() : new Date(referenceDate);
+    return refDate >= effFrom && refDate <= effTo;
+  }) : null;
 
 
 
-  const basePrice = Number(matchedBike?.basePrice || "");
+  const basePrice = (isEditMode && !bikeChanged) 
+    ? Number(newInvoice.basePrice || 0) 
+    : Number(matchedBike?.basePrice || 0);
   const disc = Number(newInvoice?.discount || "");
 
   const taxableAmt = useMemo(() => {
@@ -127,13 +142,13 @@ const Invoice = () => {
       taxableAmount: taxableAmt,
       basePrice: basePrice,
       bike: matchedBike?._id,
-      bikeModel: (matchedBike?.modelName?._id || ""),
-      bikeVariant: (matchedBike?.vairant?._id || ""),
-      bikeColorOptions: (matchedBike?.colorOptions?._id || ""),
+      bikeModel: matchedBike?.modelName?._id || newBike.model || "",
+      bikeVariant: matchedBike?.vairant?._id || matchedBike?.variant?._id || newBike.variant || "",
+      bikeColorOptions: matchedBike?.colorOptions?._id || newBike.color || "",
       hsnCode: matchedBike?.hsnCode,
       discount: matchScheme?.value,
     }));
-  }, [newInvoice.billType, basePrice, taxableAmt, finalAmt, matchedBike]);
+  }, [newInvoice.billType, basePrice, taxableAmt, finalAmt, matchedBike, newBike]);
 
   useEffect(() => {
     if (!id) return;
@@ -146,11 +161,9 @@ const Invoice = () => {
           setNewInvoice(res.data?.draftInvoice);
           console.log("the draft is ", res.data?.draftInvoice);
           setNewBike({
-            model: res.data?.draftInvoice?.bikeModel ||  res.data?.draftInvoice?.bike?.modelName?._id || "",
-
-            color: res.data?.draftInvoice?.bikeColorOptions || res.data?.draftInvoice?.bike?.colorOptions?._id || "",
-
-            variant: res.data?.draftInvoice?.bikeVariant || res.data?.draftInvoice?.bike?.variant?._id || ""
+            model: res.data?.draftInvoice?.bikeModel?._id || res.data?.draftInvoice?.bikeModel || res.data?.draftInvoice?.bike?.modelName?._id || "",
+            color: res.data?.draftInvoice?.bikeColorOptions?._id || res.data?.draftInvoice?.bikeColorOptions || res.data?.draftInvoice?.bike?.colorOptions?._id || "",
+            variant: res.data?.draftInvoice?.bikeVariant?._id || res.data?.draftInvoice?.bikeVariant || res.data?.draftInvoice?.bike?.variant?._id || ""
           });
         }
       }
@@ -211,7 +224,9 @@ const Invoice = () => {
           sgst: 9,
           totalAmount: "",
           dealer: "",
-        })
+        });
+        setNewBike({ model: "", color: "", variant: "" });
+        setNewBikeChanged(false);
       } else {
         showToast(res.data?.message, "error");
       }
@@ -349,9 +364,10 @@ const Invoice = () => {
                 <label>Select Model*</label>
                 <select
                   value={newBike.model}
-                  onChange={(e) =>
-                    setNewBike({ ...newBike, model: e.target.value })
-                  }
+                  onChange={(e) => {
+                    setNewBike({ ...newBike, model: e.target.value });
+                    setNewBikeChanged(true);
+                  }}
                 >
                   <option value="">Select Model</option>
                   {models.map((b) => (
@@ -366,9 +382,10 @@ const Invoice = () => {
                 <label>Select Variant*</label>
                 <select
                   value={newBike.variant}
-                  onChange={(e) =>
-                    setNewBike({ ...newBike, variant: e.target.value })
-                  }
+                  onChange={(e) => {
+                    setNewBike({ ...newBike, variant: e.target.value });
+                    setNewBikeChanged(true);
+                  }}
                 >
                   <option value="">Select Variant</option>
                   {varients.map((b) => (
@@ -383,9 +400,10 @@ const Invoice = () => {
                 <label>Select Color*</label>
                 <select
                   value={newBike.color}
-                  onChange={(e) =>
-                    setNewBike({ ...newBike, color: e.target.value })
-                  }
+                  onChange={(e) => {
+                    setNewBike({ ...newBike, color: e.target.value });
+                    setNewBikeChanged(true);
+                  }}
                 >
                   <option value="">Select Color</option>
                   {colors.map((b) => (

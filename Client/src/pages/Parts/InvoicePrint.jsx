@@ -146,8 +146,10 @@ const buildPrintHTML = (inv, tvsLogoPath) => {
     parts = [], labours = [], summary = {},
   } = inv;
 
-  const modelName = BikeModel?.modelName?.model || "";
-  const variant = BikeModel?.variant?.variant || "";
+  const mBike = inv.matchedBike || inv.bike || {};
+  const modelName = BikeModel?.modelName?.model || inv.bikeModel?.model || mBike?.modelName?.model || "";
+  const variant = BikeModel?.variant?.varient || BikeModel?.variant?.variant || BikeModel?.variant?.vairant || inv.bikeVariant?.varient || inv.bikeVariant?.variant || inv.bikeVariant?.vairant || mBike?.variant?.varient || mBike?.vairant?.varient || "";
+  const color = BikeModel?.color?.color || inv.bikeColorOptions?.color || mBike?.colorOptions?.color || "";
 
   /* totals */
   const partsQty = parts.reduce((s, p) => s + (p.qty || 0), 0);
@@ -265,7 +267,7 @@ const buildPrintHTML = (inv, tvsLogoPath) => {
       <div class="job-cell"><span class="lbl">JobType :</span>${service.jobType || ""}</div>
 
     <div class="job-cell"><span class="lbl">FrameNo. :</span>${vehicle.frameNo || ""}</div>
-    <div class="job-cell"><span class="lbl">Model :</span>${modelName} ${variant}</div>
+    <div class="job-cell"><span class="lbl">Model :</span>${modelName} ${variant} ${color}</div>
   </div>
   <div class="job-row">
       <div class="job-cell"><span class="lbl">NxtDue :</span>${service.nxtDue || ""}</div>
@@ -403,8 +405,10 @@ const InvoicePrint = ({ invoice, onClose, tvsLogoPath }) => {
     parts = [], labours = [], summary = {},
   } = invoice;
 
-  const modelName = BikeModel?.modelName?.model || "";
-  const variant = BikeModel?.variant?.variant || "";
+  const mBike = invoice.matchedBike || invoice.bike || {};
+  const modelName = BikeModel?.modelName?.model || invoice.bikeModel?.model || mBike?.modelName?.model || "";
+  const variant = BikeModel?.variant?.varient || BikeModel?.variant?.variant || BikeModel?.variant?.vairant || invoice.bikeVariant?.varient || invoice.bikeVariant?.variant || invoice.bikeVariant?.vairant || mBike?.variant?.varient || mBike?.vairant?.varient || "";
+  const color = BikeModel?.color?.color || invoice.bikeColorOptions?.color || mBike?.colorOptions?.color || "";
 
   /* totals */
   const partsQty = parts.reduce((s, p) => s + (p.qty || 0), 0);
@@ -569,7 +573,7 @@ const InvoicePrint = ({ invoice, onClose, tvsLogoPath }) => {
               </div>
               <div style={{ display: "flex", gap: "0" }}>
                 <div style={{ minWidth: "180px" }}><span style={jlbl}>RegnNo. :</span>{vehicle.regnNo || ""}</div>
-                <div style={{ minWidth: "180px" }}><span style={jlbl}>Model :</span>{modelName} {variant}</div>
+                <div style={{ minWidth: "180px" }}><span style={jlbl}>Model :</span>{modelName} {variant} {color}</div>
                 <div style={{ minWidth: "180px" }}><span style={jlbl}>Mechanic :</span>{service.mechanic || ""}</div>
               </div>
             </div>
