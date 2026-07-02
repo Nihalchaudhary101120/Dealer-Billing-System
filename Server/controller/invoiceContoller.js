@@ -67,9 +67,9 @@ export const addInvoice = async (req, res) => {
                 : 1; // ✅ RESET TO 1 ON APRIL 1
 
 
-            created = await invoice.create({ invoiceNumber: nextInvoiceNumber, invoiceDate: today, status, customerName, customerFatherName, customerAddress, customerDistrict, customerState, customerPhone, billType, basePrice,isHp, financeCompany, customerGstNumber, bike, chassisNumber, engineNumber, discount, taxableAmount, cgst, sgst, totalAmount, dealer, scheme });
+            created = await invoice.create({ invoiceNumber: nextInvoiceNumber, invoiceDate: today, status, customerName, customerFatherName, customerAddress, customerDistrict, customerState, customerPhone, billType, basePrice, isHp, financeCompany, customerGstNumber, bike, chassisNumber, engineNumber, discount, taxableAmount, cgst, sgst, totalAmount, dealer, scheme });
         } else {
-            created = await invoice.create({ status, customerName, customerFatherName, customerAddress, customerGstNumber, scheme, customerDistrict, customerState, customerPhone, billType,basePrice, isHp, financeCompany, bike, chassisNumber, engineNumber, discount, taxableAmount, cgst, sgst, totalAmount, dealer, });
+            created = await invoice.create({ status, customerName, customerFatherName, customerAddress, customerGstNumber, scheme, customerDistrict, customerState, customerPhone, billType, basePrice, isHp, financeCompany, bike, chassisNumber, engineNumber, discount, taxableAmount, cgst, sgst, totalAmount, dealer, });
         }
 
         if (!created) return res.status(400).json({ message: "Error creating invoice", success: false });
@@ -85,7 +85,7 @@ export const addInvoice = async (req, res) => {
 export const getAllInvoice = async (req, res) => {
     try {
         const data = await invoice.find();
-        if (!data) return res.status(404).json({ message: "No invoice found", success: false });
+        if (data.length == 0) return res.status(404).json({ message: "No invoice found", success: false });
 
         res.status(200).json({ data, message: "Invoice fetched successfully", success: true });
     } catch (err) {
@@ -131,6 +131,22 @@ export const updateInvoice = async (req, res) => {
                 success: false
             });
         }
+        const sameChassisNumber = await invoice.findOne({ chassisNumber, _id: { $ne: id } });
+        const sameEngineNumber = await invoice.findOne({ engineNumber, _id: { $ne: id } });
+
+        if (sameChassisNumber) {
+            return res.status(400).json({
+                message: "Chassis number already taken",
+                success: false
+            });
+        }
+
+        if (sameEngineNumber) {
+            return res.status(400).json({
+                message: "Engine number already taken",
+                success: false
+            });
+        }
 
         const today = new Date();
         const year = today.getMonth() < 3
@@ -167,7 +183,7 @@ export const updateInvoice = async (req, res) => {
         old.customerPhone = customerPhone;
         old.customerGstNumber = customerGstNumber;
         old.billType = billType;
-        old.basePrice=basePrice;
+        old.basePrice = basePrice;
         old.isHp = isHp;
         old.financeCompany = financeCompany || null;
         old.bike = bike;
@@ -208,7 +224,7 @@ export const getAllDraft = async (req, res) => {
         const firstApril = new Date(year, 3, 1);
 
         const drafts = await invoice.find({ status: "DRAFT", createdAt: { $gte: firstApril } });
-        if (!drafts) return res.status(404).json({ message: "No drafts found", success: false });
+        if (drafts.length==0) return res.status(404).json({ message: "No drafts found", success: false });
         res.status(200).json({ message: "Drafts fetched", drafts, success: true });
     } catch (err) {
         res.status(500).json({ message: "Error fetching drafts", success: false, error: err.message });
@@ -259,7 +275,7 @@ export const printInvoice = async (req, res) => {
         const end = new Date(endDate);
         end.setHours(23, 59, 59, 999);
 
-        const inv = await invoice.find({ status: "FINAL", invoiceDate: { $gte: start, $lte: end } }).populate({
+        const inv = await invoice.find({ status: "FINAL", invoiceDate: { $gte: start, $lte: end } }).sort({ invoiceDate: 1, invoiceNumber: 1 }).populate({
             path: "bike",
             populate: [
                 { path: "modelName" },
@@ -269,7 +285,7 @@ export const printInvoice = async (req, res) => {
         })
             .populate("financeCompany");
 
-        if (!inv) return res.status(404).json({ message: "No invoice found", success: false });
+        if (inv.length==0) return res.status(404).json({ message: "No invoice found", success: false });
 
         res.status(200).json({ message: "invoice fetched successfully", inv, success: true });
 

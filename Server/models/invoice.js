@@ -8,11 +8,11 @@ const InvoiceSchema = new mongoose.Schema({
         enum: ["DRAFT", "FINAL", "CANCELLED"],
         default: "DRAFT"
     },
-    basePrice:{
-        type:Number,
-        required:true
+    basePrice: {
+        type: Number,
+        required: true
     },
-    
+
     customerName: {
         type: String,
         required: true
@@ -33,9 +33,12 @@ const InvoiceSchema = new mongoose.Schema({
         type: String
     },
     customerPhone: {
-        type: Number
+        type: String
     },
-    customerGstNumber : String,
+    customerGstNumber: {
+        type: String, trim: true,
+        uppercase: true
+    },
     billType: {
         type: String,
         enum: ["Cash", "Credit"],
@@ -60,12 +63,14 @@ const InvoiceSchema = new mongoose.Schema({
     chassisNumber: {
         type: String,
         required: true,
-        unique: true
+        unique: true, trim: true,
+        uppercase: true
     },
     engineNumber: {
         type: String,
         required: true,
-        unique: true
+        unique: true, trim: true,
+        uppercase: true
     },
 
     discount: {
@@ -78,19 +83,21 @@ const InvoiceSchema = new mongoose.Schema({
     },
 
     taxableAmount: {
-        type: Number
+        type: Number,
+        default:0   
     },
     cgst: {
-        type: Number
+        type: Number,
+        default:0 
     },
-    sgst: Number,
-    totalAmount: Number,
+    sgst: {type: Number,default:0 },
+    totalAmount:{type: Number , default:0},
 
     dealer: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "dealer"
     },
-    
+
 
 }, { timestamps: true });
 
