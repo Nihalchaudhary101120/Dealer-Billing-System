@@ -20,6 +20,8 @@ const Invoice = () => {
     color: "",
     variant: ""
   });
+  const[bikeChanged , setNewBikeChanged] = useState(false);
+
   
 
   const [loading, setLoading] = useState(false);
@@ -34,10 +36,14 @@ const Invoice = () => {
     customerPhone: "",
     customerGstNumber: "",
     billType: "Cash",
-    basePrice:"",
+    basePrice: "",
     isHp: false,
     financeCompany: "",
     bike: "",
+    bikeModel: "",
+    bikeVariant: "",
+    bikeColorOptions: "",
+    hsnCode: "",
     chassisNumber: "",
     engineNumber: "",
     discount: 0,
@@ -49,12 +55,16 @@ const Invoice = () => {
     dealer: "",
   });
 
+ 
+
 
   const matchedBike = Array.isArray(bikes) ? bikes.find((b) =>
     String(b.modelName?._id) === String(newBike.model) &&
     String(b.colorOptions?._id) === String(newBike.color) &&
     String(b.variant?._id) === String(newBike.variant)
   ) : null
+
+
 
   const basePrice = Number(matchedBike?.basePrice || "");
   const disc = Number(newInvoice?.discount || "");
@@ -115,8 +125,12 @@ const Invoice = () => {
       isHp: prev.billType === "Credit",
       totalAmount: finalAmt.toFixed(2),
       taxableAmount: taxableAmt,
-      basePrice:basePrice,
+      basePrice: basePrice,
       bike: matchedBike?._id,
+      bikeModel: (matchedBike?.modelName?._id || ""),
+      bikeVariant: (matchedBike?.vairant?._id || ""),
+      bikeColorOptions: (matchedBike?.colorOptions?._id || ""),
+      hsnCode: matchedBike?.hsnCode,
       discount: matchScheme?.value,
     }));
   }, [newInvoice.billType, basePrice, taxableAmt, finalAmt, matchedBike]);
@@ -130,11 +144,13 @@ const Invoice = () => {
 
         if (res.data?.success) {
           setNewInvoice(res.data?.draftInvoice);
-        console.log("the draft is ",res.data?.draftInvoice);
+          console.log("the draft is ", res.data?.draftInvoice);
           setNewBike({
-            model: res.data?.draftInvoice?.bike?.modelName?._id || "",
-            color: res.data?.draftInvoice?.bike?.colorOptions?._id || "",
-            variant: res.data?.draftInvoice?.bike?.variant?._id || ""
+            model: res.data?.draftInvoice?.bikeModel ||  res.data?.draftInvoice?.bike?.modelName?._id || "",
+
+            color: res.data?.draftInvoice?.bikeColorOptions || res.data?.draftInvoice?.bike?.colorOptions?._id || "",
+
+            variant: res.data?.draftInvoice?.bikeVariant || res.data?.draftInvoice?.bike?.variant?._id || ""
           });
         }
       }
@@ -144,7 +160,7 @@ const Invoice = () => {
     };
 
     fetchDraft();
-  }, [id,dealers]);
+  }, [id, dealers]);
 
 
   const handleSubmit = async (e) => {
@@ -182,7 +198,7 @@ const Invoice = () => {
           customerPhone: "",
           customerGstNumber: "",
           billType: "Cash",
-          basePrice:"",
+          basePrice: "",
           isHp: false,
           financeCompany: "",
           bike: "",
@@ -696,7 +712,7 @@ const Invoice = () => {
                 <label>HSN*</label>
                 <input
                   type="text"
-                  value={matchedBike?.hsnCode || ""}
+                  value={newInvoice?.hsnCode || matchedBike?.hsnCode || ""}
                   readOnly
                 />
               </div>

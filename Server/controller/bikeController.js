@@ -31,7 +31,7 @@ export const getAllBike = async (req, res) => {
             .populate("modelName")
             .populate("variant")
             .populate("colorOptions");
-        if (!bikes) return res.status(400).json({ message: "Bikes not found", success: false });
+        if (bikes.length==0) return res.status(400).json({ message: "Bikes not found", success: false });
         res.status(200).json({ bikes, message: "Bikes fetched successfully", success: true });
     } catch (err) {
         res.status(500).json({ message: "Error fetching bikes", success: false, error: err.message });

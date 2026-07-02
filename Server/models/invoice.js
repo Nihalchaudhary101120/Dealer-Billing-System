@@ -60,6 +60,27 @@ const InvoiceSchema = new mongoose.Schema({
         required: true
     },
 
+    bikeModel:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"BikeModel",
+        required:true
+    },
+
+    bikeVariant:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"BikeVarient",
+        required:true
+    },
+    bikeColorOptions:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"BikeColor",
+        required:true
+    },
+    hsnCode:{
+        type:String,
+        default:"87112029"
+    },
+
     chassisNumber: {
         type: String,
         required: true,
